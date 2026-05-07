@@ -78,9 +78,16 @@ class PrintController extends Controller
         }
         $bills = $billQuery->get();
 
-        // Cash
-        $cashQuery = CashTransaction::orderByRaw("FIELD(status, 'pending', 'paid', 'settled')")
-                                    ->orderByDesc('transaction_date');
+        // Cash - PostgreSQL compatible ordering
+        $cashQuery = CashTransaction::orderByRaw("
+            CASE status 
+                WHEN 'pending' THEN 1 
+                WHEN 'paid' THEN 2 
+                WHEN 'settled' THEN 3 
+                ELSE 4 
+            END
+        ")->orderByDesc('transaction_date');
+        
         if ($month) {
             [$y, $m] = explode('-', $month);
             $cashQuery->whereYear('transaction_date', $y)->whereMonth('transaction_date', $m);
@@ -94,8 +101,15 @@ class PrintController extends Controller
     }
     public function cashList(Request $request)
     {
-        $query = CashTransaction::orderByRaw("FIELD(status, 'pending', 'paid', 'settled')")
-                                ->orderByDesc('transaction_date');
+        // PostgreSQL compatible ordering
+        $query = CashTransaction::orderByRaw("
+            CASE status 
+                WHEN 'pending' THEN 1 
+                WHEN 'paid' THEN 2 
+                WHEN 'settled' THEN 3 
+                ELSE 4 
+            END
+        ")->orderByDesc('transaction_date');
 
         if ($type = $request->query('type')) {
             $query->where('type', $type);
