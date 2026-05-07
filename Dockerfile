@@ -31,12 +31,6 @@ WORKDIR /var/www/html
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Copy .env
-RUN cp .env.example .env
-
-# Generate application key
-RUN php artisan key:generate --force
-
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
@@ -45,8 +39,16 @@ RUN chown -R www-data:www-data /var/www/html \
 # Configure Apache
 RUN a2enmod rewrite
 
+# Create startup script
+RUN echo '#!/bin/bash\n\
+php artisan migrate --force\n\
+php artisan config:cache\n\
+php artisan route:cache\n\
+php artisan view:cache\n\
+apache2-foreground' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
+
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start Apache with migrations
+CMD ["/usr/local/bin/start.sh"]

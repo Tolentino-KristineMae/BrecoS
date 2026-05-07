@@ -1,24 +1,16 @@
 services:
   - type: web
     name: breco-backend
-    env: php
+    env: docker
     plan: starter
-    rootDir: backend
-    buildCommand: |
-      cp .env.example .env
-      composer install --no-dev --optimize-autoloader
-      php artisan key:generate --force
-    startCommand: |
-      php artisan migrate --force
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
-      heroku-php-apache2 public/
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: false
+      - key: APP_KEY
+        generateValue: true
       - key: DB_CONNECTION
         value: pgsql
       - fromGroup: breco-db
