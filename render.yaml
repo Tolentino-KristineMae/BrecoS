@@ -3,6 +3,7 @@ services:
     name: breco-backend
     env: php
     plan: starter
+    rootDir: backend
     buildCommand: |
       cp .env.example .env
       composer install --no-dev --optimize-autoloader
