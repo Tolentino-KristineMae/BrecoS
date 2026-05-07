@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { createBill, getCategories, getBillerSuggestions } from '../../api/bills';
 import Modal from '../../components/Modal';
 import CategoryDisplay from '../../components/CategoryDisplay';
+import { playSuccessSound } from '../../utils/sounds';
 
 const fieldCls =
   'w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent placeholder-slate-400';
@@ -213,6 +214,7 @@ export default function CreateBillModal({ onClose }) {
   const mutation = useMutation({
     mutationFn: createBill,
     onSuccess: (bill) => {
+      playSuccessSound('bill'); // Play success sound
       toast.success(`Bill created! ID: ${bill.transaction_id}`);
       qc.invalidateQueries({ queryKey: ['bills'] });
       qc.invalidateQueries({ queryKey: ['bill-stats'] });

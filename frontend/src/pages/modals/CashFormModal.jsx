@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 
 import { createCashTransaction } from '../../api/cash';
 import Modal from '../../components/Modal';
+import { playSuccessSound } from '../../utils/sounds';
 
 const fieldCls =
   'w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent placeholder-slate-400';
@@ -112,6 +113,8 @@ export default function CashFormModal({ type, onClose }) {
     mutationFn: (data) => createCashTransaction(data),
     retry: false,
     onSuccess: (txn) => {
+      // Play different sounds for cash in vs cash out
+      playSuccessSound(isCashIn ? 'cash-in' : 'cash-out');
       toast.success(`${isCashIn ? 'Cash In' : 'Cash Out'} recorded! ${txn.transaction_code}`);
       qc.invalidateQueries({ queryKey: ['cash'] });
       onClose();
