@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Settings, Printer, ArrowLeftRight, PanelLeftClose, PanelLeftOpen, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileText, Settings, Printer, ArrowLeftRight, PanelLeftClose, PanelLeftOpen, Menu, LogOut } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { logout } from '../api/auth';
@@ -61,15 +61,6 @@ export default function Layout() {
           <img src={brecoLogo} alt="Brecos" className="absolute object-contain"
             style={{ left: '20px', right: '20px', maxHeight: '52px', width: 'calc(100% - 40px)' }} />
         )}
-        {/* Mobile close button */}
-        {mobile && (
-          <button
-            onClick={() => setMobileOpen(false)}
-            className="absolute right-3 top-3 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100"
-          >
-            <X size={16} />
-          </button>
-        )}
       </div>
 
       {/* Nav */}
@@ -123,7 +114,33 @@ export default function Layout() {
         ))}
       </nav>
 
-      {/* Footer — user + logout */}
+      {/* Logout button - positioned above user info */}
+      <div className="px-2 pb-2 flex-shrink-0">
+        <button
+          onClick={() => logoutMutation.mutate()}
+          disabled={logoutMutation.isPending}
+          className="w-full group relative flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-150 whitespace-nowrap text-red-200/80 hover:bg-white/10 hover:text-red-300"
+          style={{
+            justifyContent: (!mobile && collapsed) ? 'center' : 'flex-start',
+            padding: (!mobile && collapsed) ? '12px 0' : '12px 16px',
+          }}
+        >
+          <LogOut size={18} className="flex-shrink-0" />
+          <span
+            className="overflow-hidden"
+            style={{
+              maxWidth: (!mobile && collapsed) ? '0px' : '160px',
+              opacity: (!mobile && collapsed) ? 0 : 1,
+              transition: 'max-width 220ms cubic-bezier(0.4,0,0.2,1), opacity 150ms ease',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Logout
+          </span>
+        </button>
+      </div>
+
+      {/* Footer — user info only */}
       <div className="px-2 py-3 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <div
           className="rounded-xl flex items-center overflow-hidden"
@@ -154,23 +171,6 @@ export default function Layout() {
             <p className="text-xs text-white/80 font-semibold leading-none truncate">{user?.name ?? 'Admin'}</p>
             <p className="text-[10px] text-blue-300/60 mt-0.5">{user?.email ?? 'Brecos System'}</p>
           </div>
-
-          {/* Logout button */}
-          <button
-            onClick={() => logoutMutation.mutate()}
-            disabled={logoutMutation.isPending}
-            title="Logout"
-            style={{
-              opacity: (!mobile && collapsed) ? 0 : 1,
-              maxWidth: (!mobile && collapsed) ? '0px' : '32px',
-              overflow: 'hidden',
-              transition: 'max-width 220ms cubic-bezier(0.4,0,0.2,1), opacity 150ms ease',
-              flexShrink: 0,
-            }}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-white/40 hover:text-red-400 hover:bg-white/10 transition-colors"
-          >
-            <LogOut size={14} />
-          </button>
         </div>
       </div>
     </>
@@ -271,8 +271,9 @@ export default function Layout() {
 
           {/* Right */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Date badge - full date on all screens */}
             <div
-              className="hidden sm:flex items-center px-3 py-1.5 rounded-full text-xs font-medium"
+              className="flex items-center px-2.5 sm:px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-medium"
               style={{
                 background: 'linear-gradient(135deg, #eff6ff, #eef2ff)',
                 color: '#3730a3',
@@ -280,17 +281,6 @@ export default function Layout() {
               }}
             >
               {new Date().toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
-            </div>
-            {/* Mobile: short date */}
-            <div
-              className="sm:hidden flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
-              style={{
-                background: 'linear-gradient(135deg, #eff6ff, #eef2ff)',
-                color: '#3730a3',
-                border: '1px solid rgba(199,210,254,0.6)',
-              }}
-            >
-              {new Date().toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })}
             </div>
 
             <div className="w-px h-5 bg-slate-200" />
