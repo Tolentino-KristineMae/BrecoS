@@ -186,6 +186,7 @@ class BillController extends Controller
 
     /**
      * Return distinct biller names and account numbers for a given category.
+     * Also returns bills data for account-to-biller mapping.
      * Used to power autocomplete suggestions in the create bill form.
      */
     public function suggestions(Request $request): JsonResponse
@@ -193,7 +194,7 @@ class BillController extends Controller
         $categoryId = $request->query('category_id');
 
         if (!$categoryId) {
-            return response()->json(['billers' => [], 'accounts' => []]);
+            return response()->json(['billers' => [], 'accounts' => [], 'bills' => []]);
         }
 
         $billers = Bill::where('bill_category_id', $categoryId)
@@ -210,9 +211,21 @@ class BillController extends Controller
             ->orderBy('account_number')
             ->pluck('account_number');
 
+        // Get bills with both account_number and biller_name for mapping
+        // This allows auto-filling biller name when account number is selected
+        $bills = Bill::where('bill_category_id', $categoryId)
+            ->whereNotNull('account_number')
+            ->whereNotNull('biller_name')
+            ->where('account_number', '!=', '')
+            ->where('biller_name', '!=', '')
+            ->select('account_number', 'biller_name')
+            ->distinct()
+            ->get();
+
         return response()->json([
             'billers'  => $billers,
             'accounts' => $accounts,
+            'bills'    => $bills, // For account-to-biller mapping
         ]);
     }
 }

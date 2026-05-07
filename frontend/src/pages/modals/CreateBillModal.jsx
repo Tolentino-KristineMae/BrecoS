@@ -189,8 +189,8 @@ export default function CreateBillModal({ onClose }) {
 
   const [form, setForm] = useState({
     bill_category_id: '',
-    biller_name: '',
     account_number: '',
+    biller_name: '',
     total_amount: '',
     due_date: '',
     notes: '',
@@ -210,6 +210,17 @@ export default function CreateBillModal({ onClose }) {
 
   const billerSuggestions  = suggestions?.billers  ?? [];
   const accountSuggestions = suggestions?.accounts ?? [];
+
+  // Create account-to-biller mapping from suggestions
+  // This maps each account number to its associated biller name
+  const accountToBillerMap = {};
+  if (suggestions?.bills) {
+    suggestions.bills.forEach(bill => {
+      if (bill.account_number && bill.biller_name) {
+        accountToBillerMap[bill.account_number] = bill.biller_name;
+      }
+    });
+  }
 
   const mutation = useMutation({
     mutationFn: createBill,
@@ -234,6 +245,20 @@ export default function CreateBillModal({ onClose }) {
 
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  // Handle account number change with auto-fill
+  const handleAccountChange = (accountNumber) => {
+    setForm((f) => {
+      const newForm = { ...f, account_number: accountNumber };
+      
+      // Auto-fill biller name if account number exists in mapping
+      if (accountToBillerMap[accountNumber]) {
+        newForm.biller_name = accountToBillerMap[accountNumber];
+      }
+      
+      return newForm;
+    });
+  };
+
   return (
     <Modal title="New Bill Record" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -251,8 +276,27 @@ export default function CreateBillModal({ onClose }) {
           />
         </div>
 
-        {/* Biller + Account */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Account Number + Biller Name (reordered and linked) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className={labelCls}>
+              Account Number <span className="text-red-400 normal-case tracking-normal">*</span>
+            </label>
+            <AutocompleteInput
+              icon={Hash}
+              value={form.account_number}
+              onChange={handleAccountChange}
+              suggestions={accountSuggestions}
+              placeholder="e.g. 1234-5678"
+              fieldCls={`${fieldCls} ${form.account_number ? 'border-emerald-300 bg-emerald-50/30' : ''}`}
+            />
+            {form.account_number && accountToBillerMap[form.account_number] && (
+              <p className="text-xs text-emerald-600 mt-1.5 flex items-center gap-1 font-medium">
+                <Check size={12} className="flex-shrink-0" />
+                <span>Auto-filled: {accountToBillerMap[form.account_number]}</span>
+              </p>
+            )}
+          </div>
           <div>
             <label className={labelCls}>Biller Name</label>
             <AutocompleteInput
@@ -264,21 +308,10 @@ export default function CreateBillModal({ onClose }) {
               fieldCls={fieldCls}
             />
           </div>
-          <div>
-            <label className={labelCls}>Account Number</label>
-            <AutocompleteInput
-              icon={Hash}
-              value={form.account_number}
-              onChange={(v) => setForm((f) => ({ ...f, account_number: v }))}
-              suggestions={accountSuggestions}
-              placeholder="e.g. 1234-5678"
-              fieldCls={fieldCls}
-            />
-          </div>
         </div>
 
         {/* Amount + Due Date */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className={labelCls}>
               Total Amount (₱) <span className="text-red-400 normal-case tracking-normal">*</span>

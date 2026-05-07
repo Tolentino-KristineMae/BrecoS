@@ -1,0 +1,199 @@
+/* ============================================
+   RESPONSIVE UTILITIES FOR BRECO SYSTEM
+   ============================================ */
+
+/* Prevent mobile zoom on input focus */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+select,
+textarea {
+  font-size: 16px !important; /* iOS won't zoom if >= 16px */
+}
+
+/* Responsive grid layouts */
+@media (max-width: 640px) {
+  /* Force single column on mobile for grid-cols-2 */
+  .grid.grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Force single column for grid-cols-3 */
+  .grid.grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  /* Force 2 columns for grid-cols-4 */
+  .grid.grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Responsive text - prevent overflow */
+@media (max-width: 768px) {
+  h1 { font-size: 1.5rem !important; }
+  h2 { font-size: 1.25rem !important; }
+  h3 { font-size: 1.125rem !important; }
+  
+  /* Smaller padding on mobile */
+  .modal-body {
+    padding: 1rem !important;
+  }
+  
+  /* Stack buttons vertically on very small screens */
+  @media (max-width: 380px) {
+    .button-group {
+      flex-direction: column !important;
+    }
+    
+    .button-group button {
+      width: 100% !important;
+    }
+  }
+}
+
+/* Card responsiveness */
+@media (max-width: 640px) {
+  /* Reduce card padding on mobile */
+  .card {
+    padding: 1rem !important;
+  }
+  
+  /* Stack card content vertically */
+  .card-horizontal {
+    flex-direction: column !important;
+  }
+}
+
+/* Table responsiveness */
+@media (max-width: 768px) {
+  /* Hide less important columns on mobile */
+  .table-hide-mobile {
+    display: none !important;
+  }
+  
+  /* Make tables scrollable */
+  .table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Modal responsiveness */
+@media (max-width: 640px) {
+  /* Full width modals on mobile */
+  .modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 1rem 1rem 0 0 !important;
+  }
+  
+  /* Reduce modal padding */
+  .modal-body {
+    padding: 1.25rem !important;
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 768px) {
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px !important; /* iOS recommended */
+    min-width: 44px !important;
+  }
+  
+  /* Larger touch targets for icons */
+  .icon-button {
+    padding: 0.75rem !important;
+  }
+}
+
+/* Prevent text selection on buttons */
+button,
+.button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  
+  .modal-content {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Reduce vertical spacing in landscape */
+  .modal-content {
+    max-height: 90vh !important;
+  }
+  
+  .modal-body {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  /* Hide navigation and non-essential elements */
+  nav,
+  .no-print,
+  button:not(.print-button) {
+    display: none !important;
+  }
+  
+  /* Expand content to full width */
+  main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Remove shadows and backgrounds */
+  * {
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Accessibility - Focus visible */
+*:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

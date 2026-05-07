@@ -162,7 +162,7 @@ export default function CashFormModal({ type, onClose }) {
         </div>
 
         {/* Person + Amount side by side */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className={labelCls}>Person Name <span className="text-red-400 normal-case tracking-normal">*</span></label>
             <input type="text" required placeholder="Sender / Receiver"
