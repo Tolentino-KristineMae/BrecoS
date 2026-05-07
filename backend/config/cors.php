@@ -23,17 +23,16 @@ return [
         'http://localhost:5173',
         'http://localhost:3000',
         'https://breco-s.vercel.app',
-        env('FRONTEND_URL'),
     ],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['Authorization', 'Content-Type', 'Accept', 'X-HTTP-Method-Override', '*'],
+    'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];
