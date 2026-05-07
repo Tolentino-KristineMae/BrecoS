@@ -32,10 +32,12 @@ COPY backend/ /var/www/html
 # Run post-install scripts
 RUN composer dump-autoload --optimize
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+# Create necessary directories and set permissions
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+    && mkdir -p storage/logs \
+    && mkdir -p bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
 
 # Configure Apache
 RUN a2enmod rewrite
@@ -51,28 +53,60 @@ RUN echo '<Directory /var/www/html/public>\n\
     Require all granted\n\
 </Directory>' >> /etc/apache2/apache2.conf
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-set -e\n\
-echo "Starting Brecos Backend..."\n\
-echo "Running migrations..."\n\
-php artisan migrate --force || echo "Migration failed, continuing..."\n\
-echo "Clearing caches..."\n\
-php artisan config:clear\n\
-php artisan route:clear\n\
-php artisan view:clear\n\
-php artisan cache:clear\n\
-echo "Caching configuration..."\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
-echo "Creating storage link..."\n\
-php artisan storage:link || echo "Storage link already exists"\n\
-echo "Starting Apache..."\n\
-apache2-foreground' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
+# Copy startup script
+COPY <<'EOF' /usr/local/bin/start.sh
+#!/bin/bash
+set -e
+
+echo "========================================="
+echo "Starting Brecos Backend"
+echo "========================================="
+
+# Wait for database to be ready
+echo "Waiting for database..."
+sleep 5
+
+# Run migrations
+echo "Running database migrations..."
+php artisan migrate --force || {
+    echo "WARNING: Migration failed, but continuing..."
+}
+
+# Clear all caches (ignore errors)
+echo "Clearing caches..."
+php artisan config:clear 2>/dev/null || true
+php artisan route:clear 2>/dev/null || true
+php artisan cache:clear 2>/dev/null || true
+
+# Cache configuration and routes
+echo "Caching configuration..."
+php artisan config:cache
+php artisan route:cache
+
+# Create storage link
+echo "Creating storage link..."
+php artisan storage:link 2>/dev/null || echo "Storage link already exists"
+
+# Set final permissions
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+
+echo "========================================="
+echo "Brecos Backend Started Successfully!"
+echo "========================================="
+
+# Start Apache
+exec apache2-foreground
+EOF
+
+RUN chmod +x /usr/local/bin/start.sh
 
 # Expose port 80
 EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
 
 # Start Apache with migrations
 CMD ["/usr/local/bin/start.sh"]
