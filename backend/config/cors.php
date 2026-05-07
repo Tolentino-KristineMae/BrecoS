@@ -22,7 +22,8 @@ return [
     'allowed_origins' => [
         'http://localhost:5173',
         'http://localhost:3000',
-        env('FRONTEND_URL', '*'),
+        'https://breco-s.vercel.app',
+        env('FRONTEND_URL'),
     ],
 
     'allowed_origins_patterns' => [],
