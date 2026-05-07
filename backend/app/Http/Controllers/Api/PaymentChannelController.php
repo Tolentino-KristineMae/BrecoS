@@ -46,7 +46,15 @@ class PaymentChannelController extends Controller
 
     public function destroy(PaymentChannel $paymentChannel): JsonResponse
     {
+        // Check if payment channel is being used by any bill payments
+        if ($paymentChannel->billPayments()->exists()) {
+            return response()->json([
+                'message' => 'Cannot delete payment channel because it is being used by one or more bill payments.',
+                'error' => 'PAYMENT_CHANNEL_IN_USE'
+            ], 422);
+        }
+
         $paymentChannel->delete();
-        return response()->json(['message' => 'Payment channel deleted.']);
+        return response()->json(['message' => 'Payment channel deleted successfully.']);
     }
 }

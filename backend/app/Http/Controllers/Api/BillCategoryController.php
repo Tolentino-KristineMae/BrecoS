@@ -65,10 +65,24 @@ class BillCategoryController extends Controller
 
     public function destroy(BillCategory $billCategory): JsonResponse
     {
-        if ($billCategory->logo_path) {
-            Storage::delete($billCategory->logo_path);
+        // Check if category is being used by any bills
+        if ($billCategory->bills()->exists()) {
+            return response()->json([
+                'message' => 'Cannot delete category because it is being used by one or more bills.',
+                'error' => 'CATEGORY_IN_USE'
+            ], 422);
         }
+
+        // Delete logo file if exists
+        if ($billCategory->logo_path) {
+            try {
+                Storage::delete($billCategory->logo_path);
+            } catch (\Exception $e) {
+                // Continue even if file deletion fails
+            }
+        }
+
         $billCategory->delete();
-        return response()->json(['message' => 'Category deleted.']);
+        return response()->json(['message' => 'Category deleted successfully.']);
     }
 }
