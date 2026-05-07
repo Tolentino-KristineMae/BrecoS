@@ -1,6 +1,13 @@
 /* ============================================
    RESPONSIVE UTILITIES FOR BRECO SYSTEM
+   Optimized for iPhone 13/14/15 (390x844)
    ============================================ */
+
+/* iOS-specific fixes */
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-touch-callout: none;
+}
 
 /* Prevent mobile zoom on input focus */
 input[type="text"],
@@ -16,6 +23,25 @@ input[type="datetime-local"],
 select,
 textarea {
   font-size: 16px !important; /* iOS won't zoom if >= 16px */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Fix iOS input shadows */
+input,
+select,
+textarea {
+  border-radius: 0.75rem;
+}
+
+/* Prevent iOS from adding default styling */
+button,
+input[type="submit"],
+input[type="button"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 /* Responsive grid layouts */
@@ -36,11 +62,64 @@ textarea {
   }
 }
 
+/* iPhone-specific optimizations (390px width) */
+@media (max-width: 430px) {
+  /* Reduce horizontal padding for iPhone */
+  body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  /* Optimize container padding */
+  .px-4 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .px-6 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  /* Smaller gaps for iPhone */
+  .gap-4 {
+    gap: 0.75rem !important;
+  }
+  
+  .gap-5 {
+    gap: 1rem !important;
+  }
+  
+  /* Optimize card spacing */
+  .space-y-5 > * + * {
+    margin-top: 1rem !important;
+  }
+  
+  .space-y-6 > * + * {
+    margin-top: 1.25rem !important;
+  }
+}
+
 /* Responsive text - prevent overflow */
 @media (max-width: 768px) {
-  h1 { font-size: 1.5rem !important; }
-  h2 { font-size: 1.25rem !important; }
-  h3 { font-size: 1.125rem !important; }
+  h1 { 
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+  h2 { 
+    font-size: 1.25rem !important;
+    line-height: 1.4 !important;
+  }
+  h3 { 
+    font-size: 1.125rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  /* Prevent text overflow */
+  p, span, div {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
   
   /* Smaller padding on mobile */
   .modal-body {
@@ -56,6 +135,31 @@ textarea {
     .button-group button {
       width: 100% !important;
     }
+  }
+}
+
+/* iPhone text optimization */
+@media (max-width: 430px) {
+  /* Optimize font sizes for iPhone */
+  .text-2xl {
+    font-size: 1.375rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.125rem !important;
+  }
+  
+  .text-lg {
+    font-size: 1rem !important;
+  }
+  
+  /* Ensure readable text */
+  .text-xs {
+    font-size: 0.75rem !important;
+  }
+  
+  .text-sm {
+    font-size: 0.875rem !important;
   }
 }
 
@@ -100,6 +204,42 @@ textarea {
   .modal-body {
     padding: 1.25rem !important;
   }
+  
+  /* Optimize modal for iPhone */
+  .modal-overlay {
+    align-items: flex-end !important;
+  }
+}
+
+/* iPhone modal optimization */
+@media (max-width: 430px) {
+  .modal-content {
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .modal-body {
+    padding: 1rem !important;
+  }
+  
+  /* Optimize modal header */
+  .modal-header {
+    padding: 1rem !important;
+    position: sticky !important;
+    top: 0 !important;
+    background: white !important;
+    z-index: 10 !important;
+  }
+  
+  /* Optimize modal footer */
+  .modal-footer {
+    padding: 1rem !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: white !important;
+    z-index: 10 !important;
+  }
 }
 
 /* Touch-friendly tap targets */
@@ -132,15 +272,44 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Safe area insets for notched devices */
+/* Safe area insets for notched devices (iPhone X and later) */
 @supports (padding: max(0px)) {
   body {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
   }
   
+  /* Header safe area */
+  header {
+    padding-top: max(0px, env(safe-area-inset-top)) !important;
+  }
+  
+  /* Modal safe area */
   .modal-content {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  /* Sidebar safe area */
+  aside {
+    padding-bottom: max(0px, env(safe-area-inset-bottom)) !important;
+  }
+  
+  /* Bottom navigation safe area */
+  .bottom-nav {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* iPhone notch optimization */
+@media (max-width: 430px) {
+  /* Ensure content doesn't hide behind notch */
+  .sticky-header {
+    padding-top: max(1rem, env(safe-area-inset-top)) !important;
+  }
+  
+  /* Bottom spacing for home indicator */
+  .page-content {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
   }
 }
 
@@ -195,5 +364,338 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   ADVANCED IPHONE OPTIMIZATIONS
+   ============================================ */
+
+/* iPhone 13/14/15 specific (390x844) */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 430px) 
+  and (-webkit-min-device-pixel-ratio: 2) {
+  
+  /* Optimize header for iPhone */
+  header {
+    min-height: 56px !important;
+  }
+  
+  /* Optimize button sizes */
+  button:not(.icon-button) {
+    padding: 0.625rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  /* Optimize input fields */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    padding: 0.625rem 0.75rem !important;
+  }
+  
+  /* Optimize table on iPhone */
+  table {
+    font-size: 0.8125rem !important;
+  }
+  
+  table th,
+  table td {
+    padding: 0.625rem 0.75rem !important;
+  }
+}
+
+/* iPhone landscape mode */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 430px) 
+  and (orientation: landscape) {
+  
+  /* Reduce header height in landscape */
+  header {
+    min-height: 48px !important;
+  }
+  
+  /* Optimize modal height in landscape */
+  .modal-content {
+    max-height: 75vh !important;
+  }
+  
+  /* Reduce vertical spacing */
+  .py-6 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  
+  .py-4 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+}
+
+/* Fix for iPhone Safari bottom bar */
+@supports (-webkit-touch-callout: none) {
+  /* iPhone Safari specific */
+  .min-h-screen {
+    min-height: -webkit-fill-available !important;
+  }
+  
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Optimize scrolling for iPhone */
+@media (max-width: 430px) {
+  /* Smooth momentum scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Optimize overflow containers */
+  .overflow-auto,
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Fix sticky positioning on iPhone */
+  .sticky {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+  }
+}
+
+/* iPhone-specific card optimizations */
+@media (max-width: 430px) {
+  /* Optimize stat displays */
+  .text-4xl {
+    font-size: 1.875rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Optimize grid gaps */
+  .gap-3 {
+    gap: 0.625rem !important;
+  }
+  
+  .gap-2 {
+    gap: 0.5rem !important;
+  }
+  
+  /* Optimize rounded corners */
+  .rounded-2xl {
+    border-radius: 1rem !important;
+  }
+  
+  .rounded-xl {
+    border-radius: 0.75rem !important;
+  }
+}
+
+/* Fix iPhone input autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: inherit !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Optimize touch targets for iPhone */
+@media (max-width: 430px) {
+  /* Ensure minimum touch target size (44x44 Apple guideline) */
+  a:not(.inline-link),
+  button,
+  input[type="button"],
+  input[type="submit"],
+  label {
+    min-height: 44px !important;
+  }
+  
+  /* Checkbox and radio buttons */
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 20px !important;
+    min-height: 20px !important;
+    margin: 12px !important;
+  }
+  
+  /* Icon buttons */
+  .icon-button,
+  button[aria-label]:not(:has(span)) {
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Fix iPhone date/time input styling */
+@media (max-width: 430px) {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    min-height: 44px !important;
+    padding: 0.625rem 0.75rem !important;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  /* Style the calendar icon */
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+  }
+}
+
+/* Optimize iPhone status bar area */
+@supports (padding-top: env(safe-area-inset-top)) {
+  @media (max-width: 430px) {
+    /* Ensure header doesn't hide behind status bar */
+    .app-header,
+    header.sticky {
+      padding-top: calc(env(safe-area-inset-top) + 0.5rem) !important;
+    }
+    
+    /* Add padding for home indicator */
+    .app-footer,
+    .modal-footer,
+    footer {
+      padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem) !important;
+    }
+    
+    /* Sidebar bottom padding */
+    aside {
+      padding-bottom: calc(env(safe-area-inset-bottom) + 1rem) !important;
+    }
+  }
+}
+
+/* iPhone-specific modal improvements */
+@media (max-width: 430px) {
+  /* Prevent modal from being too tall */
+  .modal-content {
+    max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  }
+  
+  /* Optimize modal scrolling */
+  .modal-body {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+  
+  /* Prevent body scroll when modal is open */
+  body.modal-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+  }
+}
+
+/* iPhone text selection optimization */
+@media (max-width: 430px) {
+  /* Allow text selection in content areas */
+  p, span, div:not(button):not(.no-select) {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  
+  /* Prevent selection in UI elements */
+  button, .button, nav, header, .badge {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* iPhone-specific animation performance */
+@media (max-width: 430px) {
+  /* Use GPU acceleration for animations */
+  .animate,
+  .transition,
+  [class*="transition-"] {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+/* Fix iPhone select dropdown styling */
+@media (max-width: 430px) {
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23334155' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 12px;
+    padding-right: 2.5rem !important;
+  }
+}
+
+/* iPhone-specific focus states */
+@media (max-width: 430px) {
+  /* Larger focus indicators for better visibility */
+  *:focus-visible {
+    outline: 3px solid #3b82f6 !important;
+    outline-offset: 2px !important;
+  }
+  
+  /* Remove default iOS focus glow */
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Optimize iPhone table display */
+@media (max-width: 430px) {
+  /* Make tables more compact */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  
+  /* Optimize table cells */
+  td, th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+}
+
+/* iPhone-specific loading states */
+@media (max-width: 430px) {
+  /* Optimize spinner size */
+  .spinner,
+  [role="status"] {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  /* Optimize skeleton loaders */
+  .skeleton {
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 }
