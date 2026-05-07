@@ -30,7 +30,7 @@ class BillPayment extends Model
     public function getReceiptUrlAttribute(): ?string
     {
         return $this->receipt_path
-            ? asset('storage/' . $this->receipt_path)
+            ? \Storage::url($this->receipt_path)
             : null;
     }
 

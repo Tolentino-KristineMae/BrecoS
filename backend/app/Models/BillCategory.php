@@ -20,10 +20,7 @@ class BillCategory extends Model
             return null;
         }
         
-        // Use full URL in production, relative in local
-        return config('app.env') === 'production'
-            ? config('app.url') . '/storage/' . $this->logo_path
-            : asset('storage/' . $this->logo_path);
+        return \Storage::url($this->logo_path);
     }
 
     protected $appends = ['logo_url'];

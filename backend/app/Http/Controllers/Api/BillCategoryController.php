@@ -27,7 +27,7 @@ class BillCategoryController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
-            $data['logo_path'] = $request->file('logo')->store('category-logos', 'public');
+            $data['logo_path'] = $request->file('logo')->store('category-logos');
         }
 
         unset($data['logo']);
@@ -52,9 +52,9 @@ class BillCategoryController extends Controller
 
         if ($request->hasFile('logo')) {
             if ($billCategory->logo_path) {
-                Storage::disk('public')->delete($billCategory->logo_path);
+                Storage::delete($billCategory->logo_path);
             }
-            $data['logo_path'] = $request->file('logo')->store('category-logos', 'public');
+            $data['logo_path'] = $request->file('logo')->store('category-logos');
         }
 
         unset($data['logo']);
@@ -66,7 +66,7 @@ class BillCategoryController extends Controller
     public function destroy(BillCategory $billCategory): JsonResponse
     {
         if ($billCategory->logo_path) {
-            Storage::disk('public')->delete($billCategory->logo_path);
+            Storage::delete($billCategory->logo_path);
         }
         $billCategory->delete();
         return response()->json(['message' => 'Category deleted.']);

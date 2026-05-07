@@ -42,7 +42,7 @@ class BillPaymentController extends Controller
 
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
-            $receiptPath = $request->file('receipt')->store('payment-receipts', 'public');
+            $receiptPath = $request->file('receipt')->store('payment-receipts');
         }
 
         $payment = DB::transaction(function () use ($bill, $data, $fee, $deduction, $tubo, $receiptPath) {
@@ -96,9 +96,9 @@ class BillPaymentController extends Controller
 
         if ($request->hasFile('receipt')) {
             if ($payment->receipt_path) {
-                Storage::disk('public')->delete($payment->receipt_path);
+                Storage::delete($payment->receipt_path);
             }
-            $data['receipt_path'] = $request->file('receipt')->store('payment-receipts', 'public');
+            $data['receipt_path'] = $request->file('receipt')->store('payment-receipts');
         }
 
         unset($data['receipt']);
@@ -122,7 +122,7 @@ class BillPaymentController extends Controller
 
         DB::transaction(function () use ($bill, $payment) {
             if ($payment->receipt_path) {
-                Storage::disk('public')->delete($payment->receipt_path);
+                Storage::delete($payment->receipt_path);
             }
             $payment->delete();
             $bill->recalculate();

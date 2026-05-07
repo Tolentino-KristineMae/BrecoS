@@ -136,7 +136,7 @@ class CashTransactionController extends Controller
     {
         // Delete all files from storage
         foreach ($cashTransaction->files as $file) {
-            Storage::disk('public')->delete($file->file_path);
+            Storage::delete($file->file_path);
         }
         $cashTransaction->delete();
         return response()->json(['message' => 'Transaction deleted.']);
@@ -145,7 +145,7 @@ class CashTransactionController extends Controller
     public function destroyFile(CashTransaction $cashTransaction, CashTransactionFile $file): JsonResponse
     {
         abort_if($file->cash_transaction_id !== $cashTransaction->id, 404);
-        Storage::disk('public')->delete($file->file_path);
+        Storage::delete($file->file_path);
         $file->delete();
         return response()->json(['message' => 'File deleted.']);
     }
@@ -196,7 +196,7 @@ class CashTransactionController extends Controller
         if (!$request->hasFile($field)) return;
 
         foreach ($request->file($field) as $file) {
-            $path = $file->store("cash-{$type}s", 'public');
+            $path = $file->store("cash-{$type}s");
             $txn->files()->create([
                 'file_type'     => $type,
                 'file_path'     => $path,

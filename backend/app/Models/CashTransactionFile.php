@@ -18,7 +18,7 @@ class CashTransactionFile extends Model
 
     public function getFileUrlAttribute(): string
     {
-        return asset('storage/' . $this->file_path);
+        return \Storage::url($this->file_path);
     }
 
     public function transaction(): BelongsTo
