@@ -16,9 +16,17 @@ class CashTransactionFile extends Model
 
     protected $appends = ['file_url'];
 
-    public function getFileUrlAttribute(): string
+    public function getFileUrlAttribute(): ?string
     {
-        return \Storage::url($this->file_path);
+        if (!$this->file_path) {
+            return null;
+        }
+        
+        try {
+            return \Storage::url($this->file_path);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function transaction(): BelongsTo

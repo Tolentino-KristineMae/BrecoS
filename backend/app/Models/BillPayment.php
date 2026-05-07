@@ -29,9 +29,15 @@ class BillPayment extends Model
 
     public function getReceiptUrlAttribute(): ?string
     {
-        return $this->receipt_path
-            ? \Storage::url($this->receipt_path)
-            : null;
+        if (!$this->receipt_path) {
+            return null;
+        }
+        
+        try {
+            return \Storage::url($this->receipt_path);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     protected $appends = ['receipt_url'];

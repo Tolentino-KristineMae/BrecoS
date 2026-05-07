@@ -20,7 +20,12 @@ class BillCategory extends Model
             return null;
         }
         
-        return \Storage::url($this->logo_path);
+        try {
+            return \Storage::url($this->logo_path);
+        } catch (\Exception $e) {
+            // Fallback if Storage is not configured
+            return null;
+        }
     }
 
     protected $appends = ['logo_url'];
