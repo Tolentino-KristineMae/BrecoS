@@ -106,7 +106,7 @@ export default function BillsPage() {
         <select
           value={categoryId}
           onChange={(e) => { setCategoryId(e.target.value); setPage(1); }}
-          className={inputCls}
+          className={`${inputCls} w-full sm:w-auto`}
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -117,7 +117,7 @@ export default function BillsPage() {
         <select
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-          className={inputCls}
+          className={`${inputCls} w-full sm:w-auto`}
         >
           <option value="">All Status</option>
           <option value="unpaid">Unpaid</option>
@@ -129,7 +129,7 @@ export default function BillsPage() {
         <select
           value={month}
           onChange={(e) => { setMonth(e.target.value); setPage(1); }}
-          className={inputCls}
+          className={`${inputCls} w-full sm:w-auto`}
         >
           <option value="">All Months</option>
           {Array.from({ length: 12 }, (_, i) => {

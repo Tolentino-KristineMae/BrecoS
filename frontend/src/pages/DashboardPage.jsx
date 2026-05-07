@@ -67,7 +67,7 @@ function OverviewCard({ total, paid, partial, unpaid, totalAmount, totalPaid, to
 
       {/* ── Body: main figures ── */}
       <div className="flex-1 flex items-center px-6 py-2 relative">
-        <div className="grid grid-cols-3 gap-3 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
           <div>
             <p className="text-blue-200 text-xs mb-1">Total Bills</p>
             <p className="text-2xl font-extrabold text-white">{total}</p>
@@ -143,7 +143,7 @@ function CashOverviewCard() {
         </div>
 
         <div className="flex-1 flex items-center px-6 py-2 relative">
-          <div className="grid grid-cols-3 gap-3 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
               <p className="text-emerald-200 text-xs mb-1">Transactions</p>
               <p className="text-2xl font-extrabold text-white">{inCount}</p>
@@ -195,7 +195,7 @@ function CashOverviewCard() {
         </div>
 
         <div className="flex-1 flex items-center px-6 py-2 relative">
-          <div className="grid grid-cols-3 gap-3 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
               <p className="text-red-200 text-xs mb-1">Transactions</p>
               <p className="text-2xl font-extrabold text-white">{outCount}</p>
@@ -380,7 +380,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth }) {
             </div>
 
             {/* 2×2 stat grid */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
                 { icon: <ReceiptText size={13} className="text-blue-200" />,   label: 'Bills Tubo',  value: `₱${fmt(billTubo)}`,  sub: `${totalPay} txns` },
                 { icon: <ArrowDownCircle size={13} className="text-emerald-200" />, label: 'Cash Tubo', value: `₱${fmt(cashTubo)}`, sub: `${data?.monthly?.reduce((s, m) => s + (m.cash_count ?? 0), 0) ?? 0} settled` },
