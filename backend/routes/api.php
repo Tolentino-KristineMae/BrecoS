@@ -15,6 +15,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// Health check endpoint (no auth required)
+Route::get('health', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'api_version' => 'v1',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
+
 Route::prefix('v1')->group(function () {
 
     // ── Auth (public) ─────────────────────────────────────────────────────

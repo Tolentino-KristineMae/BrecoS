@@ -53,10 +53,22 @@ RUN echo '<Directory /var/www/html/public>\n\
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
-php artisan migrate --force\n\
+set -e\n\
+echo "Starting Brecos Backend..."\n\
+echo "Running migrations..."\n\
+php artisan migrate --force || echo "Migration failed, continuing..."\n\
+echo "Clearing caches..."\n\
+php artisan config:clear\n\
+php artisan route:clear\n\
+php artisan view:clear\n\
+php artisan cache:clear\n\
+echo "Caching configuration..."\n\
 php artisan config:cache\n\
 php artisan route:cache\n\
 php artisan view:cache\n\
+echo "Creating storage link..."\n\
+php artisan storage:link || echo "Storage link already exists"\n\
+echo "Starting Apache..."\n\
 apache2-foreground' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 # Expose port 80
