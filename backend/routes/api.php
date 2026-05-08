@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\BillCategoryController;
 use App\Http\Controllers\Api\BillController;
 use App\Http\Controllers\Api\BillPaymentController;
 use App\Http\Controllers\Api\CashTransactionController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\PaymentChannelController;
 use App\Http\Controllers\Api\TuboController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,9 @@ Route::prefix('v1')->group(function () {
         // Auth
         Route::get('auth/me',     [AuthController::class, 'me']);
         Route::post('auth/logout', [AuthController::class, 'logout']);
+
+        // ── Dashboard (unified endpoint) ──────────────────────────────────
+        Route::get('dashboard/summary', [DashboardController::class, 'summary']);
 
         // ── Bill Categories ───────────────────────────────────────────────
         Route::apiResource('categories', BillCategoryController::class);

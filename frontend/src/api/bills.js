@@ -1,5 +1,9 @@
 import api from './axios';
 
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+
+export const getDashboardSummary = (params) => api.get('/dashboard/summary', { params }).then((r) => r.data);
+
 // ── Bills ─────────────────────────────────────────────────────────────────────
 
 export const getBills = (params) => api.get('/bills', { params }).then((r) => r.data);
