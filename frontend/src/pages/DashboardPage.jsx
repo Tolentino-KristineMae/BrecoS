@@ -3,8 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FileText, ChevronLeft, ChevronRight, TrendingUp,
   ReceiptText, ArrowDownCircle, ArrowUpCircle,
 } from 'lucide-react';
-import { getBillStats, getTuboSummary } from '../api/bills';
-import { getCashSummary } from '../api/cash';
+import { getDashboardSummary } from '../api/bills';
 import StatusBadge from '../components/StatusBadge';
 import CategoryDisplay from '../components/CategoryDisplay';
 import Spinner from '../components/Spinner';
@@ -105,15 +104,7 @@ function OverviewCard({ total, paid, partial, unpaid, totalAmount, totalPaid, to
 
 // ── Cash Overview Card ────────────────────────────────────────────────────────
 
-function CashOverviewCard() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['cash-summary'],
-    queryFn: () => getCashSummary(),
-  });
-
-  const cashIn  = data?.cash_in;
-  const cashOut = data?.cash_out;
-
+function CashOverviewCard({ cashIn, cashOut }) {
   const inCount  = parseInt(cashIn?.total_count  ?? 0);
   const outCount = parseInt(cashOut?.total_count ?? 0);
 
@@ -231,13 +222,8 @@ function CashOverviewCard() {
   );
 }
 
-function TuboCard({ month, onPrev, onNext, isCurrentMonth }) {
-  const { data, isLoading } = useQuery({
-    queryKey: ['tubo-summary', month],
-    queryFn: () => getTuboSummary(month ? { month } : {}),
-  });
-
-  const totals    = data?.totals;
+function TuboCard({ month, onPrev, onNext, isCurrentMonth, tuboData, isLoading }) {
+  const totals    = tuboData?.totals;
   const totalTubo = parseFloat(totals?.total_tubo  ?? 0);
   const billTubo  = parseFloat(totals?.bill_tubo   ?? 0);
   const cashTubo  = parseFloat(totals?.cash_tubo   ?? 0);
@@ -246,21 +232,21 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth }) {
   const totalPay  = parseInt(totals?.total_payments ?? 0);
   const isPos     = totalTubo >= 0;
 
-  // 3-tier goal — ₱1k / ₱2k / ₱3k
-  const TIERS = [
+  // Use tier info from backend if available
+  const tierInfo = totals?.tier_info;
+  const TIERS = tierInfo?.tiers ?? [
     { label: 'Tier 1', target: 1000, color: '#fbbf24', glow: '#f59e0b' },
     { label: 'Tier 2', target: 2000, color: '#cbd5e1', glow: '#94a3b8' },
     { label: 'Tier 3', target: 3000, color: '#fde68a', glow: '#fcd34d' },
   ];
-  const activeTier   = TIERS.findLast(t => totalTubo >= t.target) ?? null;
-  const nextTier     = TIERS.find(t => totalTubo < t.target) ?? null;
-  const tierBase     = activeTier ? activeTier.target : 0;
-  const tierCeiling  = nextTier ? nextTier.target : TIERS[TIERS.length - 1].target;
-  const tierPct      = nextTier
-    ? Math.min(((totalTubo - tierBase) / (tierCeiling - tierBase)) * 100, 100)
-    : 100;
-  const overallPct   = Math.min((totalTubo / 3000) * 100, 100);
-  // (used for future reference)
+  
+  const currentTier = tierInfo?.current_tier ?? 0;
+  const tierProgress = tierInfo?.tier_progress ?? 0;
+  const tierBase = tierInfo?.tier_base ?? 0;
+  const tierCeiling = tierInfo?.tier_ceiling ?? 1000;
+
+  const activeTier   = currentTier > 0 ? TIERS[currentTier - 1] : null;
+  const nextTier     = currentTier < TIERS.length ? TIERS[currentTier] : null;
 
   const billShare  = (Math.abs(billTubo) + Math.abs(cashTubo)) > 0
     ? (Math.abs(billTubo) / (Math.abs(billTubo) + Math.abs(cashTubo))) * 100
@@ -343,7 +329,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth }) {
                   className="mb-1 px-2 py-0.5 rounded-md text-xs font-bold"
                   style={{ background: 'rgba(255,255,255,0.15)', color: '#fcd34d' }}
                 >
-                  {tierPct.toFixed(1)}% to {nextTier?.label}
+                  {tierProgress.toFixed(1)}% to {nextTier?.label}
                 </span>
               )}
             </div>
@@ -383,7 +369,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {[
                 { icon: <ReceiptText size={13} className="text-blue-200" />,   label: 'Bills Tubo',  value: `₱${fmt(billTubo)}`,  sub: `${totalPay} txns` },
-                { icon: <ArrowDownCircle size={13} className="text-emerald-200" />, label: 'Cash Tubo', value: `₱${fmt(cashTubo)}`, sub: `${data?.monthly?.reduce((s, m) => s + (m.cash_count ?? 0), 0) ?? 0} settled` },
+                { icon: <ArrowDownCircle size={13} className="text-emerald-200" />, label: 'Cash Tubo', value: `₱${fmt(cashTubo)}`, sub: `${tuboData?.monthly?.reduce((s, m) => s + (m.cash_count ?? 0), 0) ?? 0} settled` },
                 { icon: <TrendingUp size={13} className="text-white/60" />,    label: 'Total Fee',   value: `₱${fmt(totalFee)}`,  sub: null },
                 { icon: <ArrowUpCircle size={13} className="text-white/60" />, label: 'Deductions',  value: `₱${fmt(totalDed)}`,  sub: null },
               ].map(({ icon, label, value, sub }) => (
@@ -408,7 +394,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth }) {
       >
         {[
           { label: 'Net Tubo',   value: `₱${fmt(totalTubo)}`,                                    color: accentMain },
-          { label: 'Goal',       value: activeTier ? activeTier.label : `${tierPct.toFixed(0)}%`, color: activeTier ? activeTier.color : '#fcd34d' },
+          { label: 'Goal',       value: activeTier ? activeTier.label : `${tierProgress.toFixed(0)}%`, color: activeTier ? activeTier.color : '#fcd34d' },
           { label: 'Total Txns', value: totalPay,                                                 color: 'white' },
         ].map(({ label, value, color }) => (
           <div key={label} className="px-3 py-3 text-center">
@@ -423,14 +409,8 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth }) {
 
 // ── Tubo History ──────────────────────────────────────────────────────────────
 
-function TuboHistory() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['tubo-summary', 'history'],
-    queryFn: () => getTuboSummary({}),
-  });
-
-  const monthly = data?.monthly ?? [];
-  // Backend already returns most recent first
+function TuboHistory({ monthlyData, isLoading }) {
+  const monthly = monthlyData ?? [];
   const rows = monthly;
 
   const maxTubo = Math.max(...rows.map((r) => Math.abs(r.total_tubo)), 1);
@@ -551,19 +531,26 @@ export default function DashboardPage() {
     setSelectedMonth(toYearMonth(new Date(y, m)));
   };
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ['bill-stats'],
-    queryFn: getBillStats,
+  // OPTIMIZED: Single query for all dashboard data with caching
+  const { data, isLoading } = useQuery({
+    queryKey: ['dashboard-summary', selectedMonth],
+    queryFn: () => getDashboardSummary({ month: selectedMonth }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
   });
 
-  const total       = stats?.total        ?? 0;
-  const paid        = stats?.paid         ?? 0;
-  const partial     = stats?.partial      ?? 0;
-  const unpaid      = stats?.unpaid       ?? 0;
-  const totalAmount = parseFloat(stats?.total_amount ?? 0);
-  const totalPaid   = parseFloat(stats?.total_paid   ?? 0);
-  const totalBal    = parseFloat(stats?.total_bal    ?? 0);
-  const recent      = stats?.recent       ?? [];
+  const billsData = data?.bills ?? {};
+  const cashData = data?.cash ?? {};
+  const tuboData = data?.tubo ?? {};
+
+  const total       = billsData.total        ?? 0;
+  const paid        = billsData.paid         ?? 0;
+  const partial     = billsData.partial      ?? 0;
+  const unpaid      = billsData.unpaid       ?? 0;
+  const totalAmount = parseFloat(billsData.total_amount ?? 0);
+  const totalPaid   = parseFloat(billsData.total_paid   ?? 0);
+  const totalBal    = parseFloat(billsData.total_bal    ?? 0);
+  const recent      = billsData.recent       ?? [];
 
   return (
     <div className="space-y-6">
@@ -590,7 +577,7 @@ export default function DashboardPage() {
                 total={total} paid={paid} partial={partial} unpaid={unpaid}
                 totalAmount={totalAmount} totalPaid={totalPaid} totalBal={totalBal}
               />
-              <CashOverviewCard />
+              <CashOverviewCard cashIn={cashData.cash_in} cashOut={cashData.cash_out} />
             </div>
 
             {/* Right column: Tubo Card stretches to match left column height */}
@@ -600,6 +587,8 @@ export default function DashboardPage() {
                 onPrev={prevMonth}
                 onNext={nextMonth}
                 isCurrentMonth={isCurrentMonth}
+                tuboData={tuboData}
+                isLoading={isLoading}
               />
             </div>
           </div>
@@ -684,7 +673,7 @@ export default function DashboardPage() {
           </div>
 
           {/* ── Row 4: Tubo History ── */}
-          <TuboHistory />
+          <TuboHistory monthlyData={tuboData.monthly} isLoading={isLoading} />
         </>
       )}
     </div>
