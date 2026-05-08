@@ -46,10 +46,11 @@ class BillController extends Controller
             $query->whereDate('created_at', '<=', $to);
         }
 
-        // Filter by month (YYYY-MM)
+        // Filter by month (YYYY-MM) - PostgreSQL compatible
         if ($month = $request->query('month')) {
             [$year, $mon] = explode('-', $month);
-            $query->whereYear('created_at', $year)->whereMonth('created_at', $mon);
+            $query->whereRaw("EXTRACT(YEAR FROM created_at) = ?", [$year])
+                  ->whereRaw("EXTRACT(MONTH FROM created_at) = ?", [$mon]);
         }
 
         $perPage = (int) $request->query('per_page', 20);

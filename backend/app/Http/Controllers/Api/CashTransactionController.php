@@ -34,8 +34,8 @@ class CashTransactionController extends Controller
         }
         if ($month = $request->query('month')) {
             [$year, $mon] = explode('-', $month);
-            $query->whereYear('transaction_date', $year)
-                  ->whereMonth('transaction_date', $mon);
+            $query->whereRaw("EXTRACT(YEAR FROM transaction_date) = ?", [$year])
+                  ->whereRaw("EXTRACT(MONTH FROM transaction_date) = ?", [$mon]);
         }
 
         $perPage = (int) $request->query('per_page', 20);
@@ -160,8 +160,8 @@ class CashTransactionController extends Controller
         $query = CashTransaction::query();
         if ($month) {
             [$year, $mon] = explode('-', $month);
-            $query->whereYear('transaction_date', $year)
-                  ->whereMonth('transaction_date', $mon);
+            $query->whereRaw("EXTRACT(YEAR FROM transaction_date) = ?", [$year])
+                  ->whereRaw("EXTRACT(MONTH FROM transaction_date) = ?", [$mon]);
         }
 
         // Totals grouped by type + status
