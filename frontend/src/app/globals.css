@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 64px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: #6366f1; color: #fff; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+button, input, textarea, select { font: inherit; }
+
+/* Smooth transitions */
+* { transition-property: color, background-color, border-color, box-shadow; transition-duration: 150ms; }
+
+@media print {
+  body > * { display: none !important; }
+  #print-content { display: block !important; position: fixed; top: 0; left: 0; width: 100%; padding: 20px; background: white; color: black; font-size: 11px; }
+  #print-content * { box-shadow: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @page { margin: 15mm; size: A4; }
+}
