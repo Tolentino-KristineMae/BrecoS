@@ -1,4 +1,4 @@
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Trash2 } from 'lucide-react';
 
 /**
  * Reusable confirmation modal.
@@ -8,6 +8,7 @@ import { AlertTriangle } from 'lucide-react';
  *   message     – body text
  *   confirmLabel – label for the confirm button (default "Delete")
  *   danger      – if true, confirm button is red (default true)
+ *   icon        – optional icon component to display in the modal header
  *   onConfirm   – called when user clicks confirm
  *   onCancel    – called when user clicks cancel or backdrop
  */
@@ -16,9 +17,12 @@ export default function ConfirmModal({
   message,
   confirmLabel = 'Delete',
   danger = true,
+  icon: Icon,
   onConfirm,
   onCancel,
 }) {
+  const HeaderIcon = Icon || (danger ? Trash2 : AlertTriangle);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -33,7 +37,7 @@ export default function ConfirmModal({
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ background: danger ? '#fef2f2' : '#fff7ed' }}>
-            <AlertTriangle size={20} style={{ color: danger ? '#dc2626' : '#d97706' }} />
+            <HeaderIcon size={20} style={{ color: danger ? '#dc2626' : '#d97706' }} />
           </div>
           <h2 className="text-base font-bold text-slate-800">{title}</h2>
         </div>
