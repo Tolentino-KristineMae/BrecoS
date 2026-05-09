@@ -23,6 +23,7 @@ return [
         'http://localhost:5173',
         'http://localhost:3000',
         'https://breco-s.vercel.app',
+        'https://brecossystem.vercel.app',
     ],
 
     'allowed_origins_patterns' => [],
