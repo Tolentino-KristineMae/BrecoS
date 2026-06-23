@@ -620,7 +620,7 @@ export default function DashboardPage() {
   const recent      = billsData.recent       ?? [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-x-hidden">
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
