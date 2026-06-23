@@ -414,6 +414,9 @@ function TuboHistory({ monthlyData, isLoading }) {
   const rows = monthly;
 
   const maxTubo = Math.max(...rows.map((r) => Math.abs(r.total_tubo)), 1);
+  const totalBillTubo = rows.reduce((s, r) => s + r.bill_tubo, 0);
+  const totalCashTubo = rows.reduce((s, r) => s + r.cash_tubo, 0);
+  const grandTotal = totalBillTubo + totalCashTubo;
 
   return (
     <div
@@ -427,7 +430,7 @@ function TuboHistory({ monthlyData, isLoading }) {
           <p className="text-xs text-slate-400 mt-0.5">Monthly breakdown — bills + settled cash</p>
         </div>
         <span className="text-xs font-semibold px-3 py-1 rounded-full"
-          style={{ background: '#f0fdf4', color: '#059669' }}>
+          style={{ background: '#f0fdf4', color: '#065f46' }}>
           Last 12 months
         </span>
       </div>
@@ -440,76 +443,140 @@ function TuboHistory({ monthlyData, isLoading }) {
           <p className="text-sm font-medium">No tubo data yet</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr style={{ background: '#f8faff' }}>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Month</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Bills Tubo</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Cash Tubo</th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider w-40">Bar</th>
-            </tr>
-          </thead>
-          <tbody>
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ background: '#f8faff' }}>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Month</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Bills Tubo</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Cash Tubo</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider w-40">Bar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => {
+                const isPos = row.total_tubo >= 0;
+                const barPct = Math.round((Math.abs(row.total_tubo) / maxTubo) * 100);
+                return (
+                  <tr key={row.month} className="border-t border-slate-50 hover:bg-blue-50/30">
+                    <td className="px-6 py-3.5 font-medium text-slate-700 whitespace-nowrap">{row.month_label}</td>
+                    <td className="px-6 py-3.5 text-right text-slate-500 whitespace-nowrap">
+                      <span className="text-xs">₱{fmt(row.bill_tubo)}</span>
+                      {row.bill_count > 0 && (
+                        <span className="ml-1 text-[10px] text-slate-400">({row.bill_count})</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-3.5 text-right text-slate-500 whitespace-nowrap">
+                      <span className="text-xs">₱{fmt(row.cash_tubo)}</span>
+                      {row.cash_count > 0 && (
+                        <span className="ml-1 text-[10px] text-slate-400">({row.cash_count})</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-3.5 text-right font-bold whitespace-nowrap"
+                      style={{ color: isPos ? '#059669' : '#dc2626' }}>
+                      ₱{fmt(row.total_tubo)}
+                    </td>
+                    <td className="px-6 py-3.5">
+                      <div className="w-full bg-slate-100 rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full transition-all"
+                          style={{
+                            width: `${barPct}%`,
+                            background: isPos
+                              ? 'linear-gradient(90deg, #059669, #10b981)'
+                              : 'linear-gradient(90deg, #dc2626, #ef4444)',
+                          }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            {/* Totals footer */}
+            <tfoot>
+              <tr style={{ background: '#f8faff', borderTop: '2px solid #e0e7ff' }}>
+                <td className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Total</td>
+                <td className="px-6 py-3 text-right font-bold text-slate-700">
+                  ₱{fmt(totalBillTubo)}
+                </td>
+                <td className="px-6 py-3 text-right font-bold text-slate-700">
+                  ₱{fmt(totalCashTubo)}
+                </td>
+                <td className="px-6 py-3 text-right font-extrabold"
+                  style={{ color: grandTotal >= 0 ? '#059669' : '#dc2626' }}>
+                  ₱{fmt(grandTotal)}
+                </td>
+                <td />
+              </tr>
+            </tfoot>
+          </table>
+          </div>
+
+          {/* Mobile card list */}
+          <div className="md:hidden divide-y divide-slate-50">
             {rows.map((row) => {
               const isPos = row.total_tubo >= 0;
               const barPct = Math.round((Math.abs(row.total_tubo) / maxTubo) * 100);
               return (
-                <tr key={row.month} className="border-t border-slate-50 hover:bg-blue-50/30">
-                  <td className="px-6 py-3.5 font-medium text-slate-700 whitespace-nowrap">{row.month_label}</td>
-                  <td className="px-6 py-3.5 text-right text-slate-500 whitespace-nowrap">
-                    <span className="text-xs">₱{fmt(row.bill_tubo)}</span>
-                    {row.bill_count > 0 && (
-                      <span className="ml-1 text-[10px] text-slate-400">({row.bill_count})</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-3.5 text-right text-slate-500 whitespace-nowrap">
-                    <span className="text-xs">₱{fmt(row.cash_tubo)}</span>
-                    {row.cash_count > 0 && (
-                      <span className="ml-1 text-[10px] text-slate-400">({row.cash_count})</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-3.5 text-right font-bold whitespace-nowrap"
-                    style={{ color: isPos ? '#059669' : '#dc2626' }}>
-                    ₱{fmt(row.total_tubo)}
-                  </td>
-                  <td className="px-6 py-3.5">
-                    <div className="w-full bg-slate-100 rounded-full h-2">
-                      <div
-                        className="h-2 rounded-full transition-all"
-                        style={{
-                          width: `${barPct}%`,
-                          background: isPos
-                            ? 'linear-gradient(90deg, #059669, #10b981)'
-                            : 'linear-gradient(90deg, #dc2626, #ef4444)',
-                        }}
-                      />
+                <div key={row.month} className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-medium text-slate-700 text-sm">{row.month_label}</p>
+                    <p className="font-bold text-sm"
+                      style={{ color: isPos ? '#059669' : '#dc2626' }}>
+                      ₱{fmt(row.total_tubo)}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-2">
+                    <div>
+                      <p className="text-[10px] text-slate-400 uppercase font-semibold">Bills Tubo</p>
+                      <p className="text-xs text-slate-600">₱{fmt(row.bill_tubo)}{row.bill_count > 0 && ` (${row.bill_count})`}</p>
                     </div>
-                  </td>
-                </tr>
+                    <div>
+                      <p className="text-[10px] text-slate-400 uppercase font-semibold">Cash Tubo</p>
+                      <p className="text-xs text-slate-600">₱{fmt(row.cash_tubo)}{row.cash_count > 0 && ` (${row.cash_count})`}</p>
+                    </div>
+                  </div>
+                  <div className="w-full bg-slate-100 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full transition-all"
+                      style={{
+                        width: `${barPct}%`,
+                        background: isPos
+                          ? 'linear-gradient(90deg, #059669, #10b981)'
+                          : 'linear-gradient(90deg, #dc2626, #ef4444)',
+                      }}
+                    />
+                  </div>
+                </div>
               );
             })}
-          </tbody>
-          {/* Totals footer */}
-          <tfoot>
-            <tr style={{ background: '#f8faff', borderTop: '2px solid #e0e7ff' }}>
-              <td className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Total</td>
-              <td className="px-6 py-3 text-right font-bold text-slate-700">
-                ₱{fmt(rows.reduce((s, r) => s + r.bill_tubo, 0))}
-              </td>
-              <td className="px-6 py-3 text-right font-bold text-slate-700">
-                ₱{fmt(rows.reduce((s, r) => s + r.cash_tubo, 0))}
-              </td>
-              <td className="px-6 py-3 text-right font-extrabold"
-                style={{ color: rows.reduce((s, r) => s + r.total_tubo, 0) >= 0 ? '#059669' : '#dc2626' }}>
-                ₱{fmt(rows.reduce((s, r) => s + r.total_tubo, 0))}
-              </td>
-              <td />
-            </tr>
-          </tfoot>
-        </table>
-        </div>
+            {/* Total summary card for mobile */}
+            <div className="p-4" style={{ background: '#f8faff' }}>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Bills Tubo</p>
+                  <p className="text-sm font-bold text-slate-700">₱{fmt(totalBillTubo)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-400 uppercase font-semibold">Cash Tubo</p>
+                  <p className="text-sm font-bold text-slate-700">₱{fmt(totalCashTubo)}</p>
+                </div>
+              </div>
+              <div className="mt-2 pt-2 border-t border-slate-100">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Grand Total</p>
+                <p className="text-sm font-extrabold"
+                  style={{ color: grandTotal >= 0 ? '#059669' : '#dc2626' }}>
+                  ₱{fmt(grandTotal)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
@@ -628,7 +695,7 @@ export default function DashboardPage() {
                 </thead>
                 <tbody>
                   {recent.map((bill) => (
-                    <tr key={bill.id} className="border-t border-slate-50 hover:bg-blue-50/40" style={{ transition: 'background 120ms' }}>
+                    <tr key={bill.id} className="border-t border-slate-50 hover:bg-blue-50/30" style={{ transition: 'background 120ms' }}>
                       <td className="px-6 py-3.5 whitespace-nowrap">
                         <span className="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">{bill.transaction_id}</span>
                       </td>

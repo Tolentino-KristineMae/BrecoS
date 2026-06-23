@@ -220,10 +220,12 @@ export default function CashPage() {
                   onClick={() => navigate(`/cash/${txn.id}`)}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <div className="mb-1.5">
                         <span className="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">
                           {txn.transaction_code}
                         </span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-1.5">
                         <TypeBadge type={txn.type} />
                         <StatusBadge status={txn.status} />
                       </div>
