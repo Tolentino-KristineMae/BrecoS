@@ -99,14 +99,14 @@ export default function CashPage() {
           <h1 className="text-2xl font-bold text-slate-800">Cash Transactions</h1>
           <p className="text-sm text-slate-400 mt-0.5">Track cash in and cash out with tubo</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <button onClick={() => navigate('/cash/new-in')}
-            className="flex items-center gap-2 text-white px-4 py-2.5 rounded-xl text-sm font-semibold active:scale-95"
+            className="flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl text-sm font-semibold active:scale-95 flex-1"
             style={{ background: 'linear-gradient(135deg, #059669, #10b981)', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
             <ArrowDownCircle size={15} /> Cash In
           </button>
           <button onClick={() => navigate('/cash/new-out')}
-            className="flex items-center gap-2 text-white px-4 py-2.5 rounded-xl text-sm font-semibold active:scale-95"
+            className="flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl text-sm font-semibold active:scale-95 flex-1"
             style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444)', boxShadow: '0 4px 12px rgba(239,68,68,0.3)' }}>
             <ArrowUpCircle size={15} /> Cash Out
           </button>
