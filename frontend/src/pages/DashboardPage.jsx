@@ -50,7 +50,7 @@ function OverviewCard({ total, paid, partial, unpaid, totalAmount, totalPaid, to
       <div className="absolute right-16 -bottom-10 w-28 h-28 rounded-full bg-white/5 pointer-events-none" />
 
       {/* ── Header ── */}
-      <div className="px-6 pt-5 pb-4 flex items-center justify-between relative">
+      <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 flex items-center justify-between relative">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <ReceiptText size={20} className="text-white" />
@@ -65,7 +65,7 @@ function OverviewCard({ total, paid, partial, unpaid, totalAmount, totalPaid, to
       </div>
 
       {/* ── Body: main figures ── */}
-      <div className="flex-1 flex items-center px-6 py-2 relative">
+      <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
           <div>
             <p className="text-blue-200 text-xs mb-1">Total Bills</p>
@@ -123,7 +123,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
         }}>
         <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
 
-        <div className="px-6 pt-5 pb-4 flex items-center gap-3 relative">
+        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 flex items-center gap-3 relative">
           <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <ArrowDownCircle size={20} className="text-white" />
           </div>
@@ -133,7 +133,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center px-6 py-2 relative">
+        <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
               <p className="text-emerald-200 text-xs mb-1">Transactions</p>
@@ -175,7 +175,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
         }}>
         <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
 
-        <div className="px-6 pt-5 pb-4 flex items-center gap-3 relative">
+        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 flex items-center gap-3 relative">
           <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <ArrowUpCircle size={20} className="text-white" />
           </div>
@@ -185,7 +185,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center px-6 py-2 relative">
+        <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
               <p className="text-red-200 text-xs mb-1">Transactions</p>
@@ -275,7 +275,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth, tuboData, isLoading }
       <div className="absolute right-10 bottom-10 w-20 h-20 rounded-full bg-white/5 pointer-events-none" />
 
       {/* ── Header ── */}
-      <div className="px-6 pt-5 pb-3 flex items-center justify-between relative">
+      <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 flex items-center justify-between relative">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-lg leading-none">₱</span>
@@ -302,7 +302,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth, tuboData, isLoading }
       </div>
 
       {/* ── Body ── */}
-      <div className="flex-1 flex flex-col px-6 py-4 relative gap-4 justify-center">
+      <div className="flex-1 flex flex-col px-4 sm:px-6 py-4 relative gap-4 justify-center">
         {isLoading ? (
           <div className="flex flex-col gap-3">
             <div className="h-10 w-36 bg-white/20 rounded-xl animate-pulse" />
