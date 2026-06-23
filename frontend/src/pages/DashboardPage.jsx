@@ -238,6 +238,8 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth, tuboData, isLoading }
     { label: 'Tier 1', target: 1000, color: '#fbbf24', glow: '#f59e0b' },
     { label: 'Tier 2', target: 2000, color: '#cbd5e1', glow: '#94a3b8' },
     { label: 'Tier 3', target: 3000, color: '#fde68a', glow: '#fcd34d' },
+    { label: 'Tier 4', target: 4000, color: '#34d399', glow: '#10b981' },
+    { label: 'Tier 5', target: 5000, color: '#60a5fa', glow: '#3b82f6' },
   ];
   
   const currentTier = tierInfo?.current_tier ?? 0;
@@ -361,7 +363,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth, tuboData, isLoading }
               </div>
               <div className="flex justify-between text-[10px] text-white/40 mt-1">
                 <span>₱0</span>
-                <span>₱{fmt(totalTubo)} / ₱3,000</span>
+                <span>₱{fmt(totalTubo)} / ₱5,000</span>
               </div>
             </div>
 
