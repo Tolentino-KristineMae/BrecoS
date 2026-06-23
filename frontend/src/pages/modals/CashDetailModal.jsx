@@ -238,7 +238,7 @@ export default function CashDetailModal({ txnId, onClose }) {
       <div className="space-y-4">
 
         {/* ── Hero ── */}
-        <div className="rounded-2xl p-5 relative overflow-hidden"
+        <div className="rounded-2xl p-4 sm:p-5 relative overflow-hidden"
           style={{
             background: isCashIn
               ? 'linear-gradient(135deg, #064e3b 0%, #059669 100%)'
@@ -246,7 +246,7 @@ export default function CashDetailModal({ txnId, onClose }) {
             boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
           }}>
           <div className="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-white/5 pointer-events-none" />
-          <div className="relative flex items-center justify-between gap-4">
+          <div className="relative flex flex-col items-start gap-4">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0">
                 <Icon size={24} className="text-white" />
@@ -255,11 +255,11 @@ export default function CashDetailModal({ txnId, onClose }) {
                 <p className="text-white/60 text-xs font-semibold uppercase tracking-widest mb-0.5">
                   {isCashIn ? 'Cash In' : 'Cash Out'}
                 </p>
-                <p className="text-4xl font-extrabold text-white leading-none">₱{fmt(txn.amount)}</p>
+                <p className="text-3xl sm:text-4xl font-extrabold text-white leading-none">₱{fmt(txn.amount)}</p>
                 <p className="text-white/75 text-sm mt-1 font-medium">{txn.person_name}</p>
               </div>
             </div>
-            <div className="text-right flex-shrink-0">
+            <div className="text-left sm:text-right w-full sm:w-auto">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold"
                 style={{
                   background: txn.status === 'settled'
@@ -338,7 +338,7 @@ export default function CashDetailModal({ txnId, onClose }) {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-xl px-4 py-1" style={{ background: '#f8faff', border: '1px solid #e0e7ff' }}>
               {[
                 { label: 'Code',             value: txn.transaction_code, mono: true },
@@ -373,7 +373,7 @@ export default function CashDetailModal({ txnId, onClose }) {
         )}
 
         {/* ── Files ── */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Proof of Transaction — read-only, uploaded during creation */}
           <FileSection
             title="Proof of Transaction" icon={Camera} accentColor="#7c3aed"

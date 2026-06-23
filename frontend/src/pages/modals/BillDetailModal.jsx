@@ -382,7 +382,7 @@ export default function BillDetailModal({ billId, onClose }) {
               <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider">Record Payment</p>
 
               {/* Channel + Amount */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-slate-500 mb-1.5">
                     Payment Channel <span className="text-red-400">*</span>
@@ -567,7 +567,7 @@ export default function BillDetailModal({ billId, onClose }) {
                         <div className="space-y-3">
                           <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider">Edit Payment #{i + 1}</p>
 
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                               <label className="block text-xs font-medium text-slate-500 mb-1">Channel</label>
                               <select
@@ -591,7 +591,7 @@ export default function BillDetailModal({ billId, onClose }) {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                               <label className="block text-xs font-medium text-slate-500 mb-1">Fee (₱)</label>
                               <AmountPicker
