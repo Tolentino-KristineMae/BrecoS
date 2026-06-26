@@ -249,7 +249,6 @@ input[type="button"] {
   input[type="button"],
   input[type="submit"] {
     min-height: 44px !important; /* iOS recommended */
-    min-width: 44px !important;
   }
   
   /* Larger touch targets for icons */
@@ -382,19 +381,6 @@ html {
     min-height: 56px !important;
   }
   
-  /* Optimize button sizes */
-  button:not(.icon-button) {
-    padding: 0.625rem 1rem !important;
-    font-size: 0.875rem !important;
-  }
-  
-  /* Optimize input fields */
-  input:not([type="checkbox"]):not([type="radio"]),
-  select,
-  textarea {
-    padding: 0.625rem 0.75rem !important;
-  }
-  
   /* Optimize table on iPhone */
   table {
     font-size: 0.8125rem !important;
@@ -404,6 +390,9 @@ html {
   table td {
     padding: 0.625rem 0.75rem !important;
   }
+  
+  /* NOTE: Do NOT override button padding or input padding here —
+     it breaks pl-11 / pr-4 icon-offset inputs and custom-styled buttons. */
 }
 
 /* iPhone landscape mode */
@@ -523,6 +512,8 @@ input:-webkit-autofill:active {
   input[type="submit"],
   label {
     min-height: 44px !important;
+    /* NOTE: Do NOT set padding here — it would override pl-11 on icon inputs
+       and break gradient button padding set inline/via Tailwind. */
   }
   
   /* Checkbox and radio buttons */
@@ -551,9 +542,9 @@ input:-webkit-autofill:active {
   input[type="datetime-local"],
   input[type="month"] {
     min-height: 44px !important;
-    padding: 0.625rem 0.75rem !important;
     -webkit-appearance: none;
     appearance: none;
+    /* NOTE: No padding override here — use Tailwind classes per-field */
   }
   
   /* Style the calendar icon */

@@ -239,11 +239,11 @@ export default function Layout() {
           }}
         >
           {/* Left */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100"
+              className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 flex-shrink-0"
             >
               <Menu size={20} />
             </button>
@@ -251,49 +251,54 @@ export default function Layout() {
             {/* Desktop collapse toggle */}
             <button
               onClick={() => setCollapsed(c => !c)}
-              className="hidden lg:flex w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+              className="hidden lg:flex w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex-shrink-0"
               title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
             </button>
 
-            <div className="w-px h-5 bg-slate-200 hidden sm:block" />
+            <div className="w-px h-5 bg-slate-200 hidden sm:block flex-shrink-0" />
 
             {/* Breadcrumb */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm text-slate-400 font-medium hidden sm:inline">Brecos</span>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-slate-300 hidden sm:block">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="text-sm text-slate-400 font-medium hidden sm:inline flex-shrink-0">Brecos</span>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-slate-300 hidden sm:block flex-shrink-0">
                 <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <span className="text-sm font-semibold text-slate-700">{currentPage}</span>
+              <span className="text-sm font-semibold text-slate-700 truncate">{currentPage}</span>
             </div>
           </div>
 
           {/* Right */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Date badge - full date on all screens */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            {/* Date badge - short on mobile, full on sm+ */}
             <div
-              className="flex items-center px-2.5 sm:px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-medium"
+              className="flex items-center px-2 sm:px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0"
               style={{
                 background: 'linear-gradient(135deg, #eff6ff, #eef2ff)',
                 color: '#3730a3',
                 border: '1px solid rgba(199,210,254,0.6)',
               }}
             >
-              {new Date().toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+              <span className="sm:hidden">
+                {new Date().toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })}
+              </span>
+              <span className="hidden sm:inline">
+                {new Date().toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
             </div>
 
-            <div className="w-px h-5 bg-slate-200" />
+            <div className="w-px h-5 bg-slate-200 flex-shrink-0" />
 
-            <div className="flex items-center gap-2 cursor-pointer group">
+            <div className="flex items-center gap-2 cursor-pointer group flex-shrink-0">
               <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)' }}
               >
                 {user?.name?.[0]?.toUpperCase() ?? 'B'}
               </div>
               <div className="hidden md:block">
-                <p className="text-xs font-semibold text-slate-700 leading-none">{user?.name ?? 'Admin'}</p>
+                <p className="text-xs font-semibold text-slate-700 leading-none truncate max-w-[100px]">{user?.name ?? 'Admin'}</p>
                 <p className="text-[10px] text-slate-400 mt-0.5">Brecos System</p>
               </div>
             </div>

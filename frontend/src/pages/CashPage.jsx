@@ -117,11 +117,11 @@ export default function CashPage() {
       <div className="bg-white rounded-2xl p-4 flex flex-wrap gap-3 items-center"
         style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 8px rgba(37,99,235,0.05)' }}>
         <Filter size={15} className="text-blue-400 flex-shrink-0" />
-        <div className="relative flex-1 min-w-[180px]">
+        <div className="relative flex-1 min-w-0">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input type="text" placeholder="Search name, code, remarks…"
             value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className={`${inputCls} w-full pl-11 pr-3`} />
+            className={`${inputCls} w-full pl-9 pr-3`} />
         </div>
         <select value={type} onChange={(e) => { setType(e.target.value); setPage(1); }} className={inputCls}>
           <option value="">All Types</option>

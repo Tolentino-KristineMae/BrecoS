@@ -33,7 +33,7 @@ export default function LoginPage() {
   };
 
   const inputCls = (hasError) =>
-    `w-full pl-11 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
+    `w-full pl-9 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
       hasError
         ? 'border-red-400 bg-red-50 focus:ring-red-400'
         : 'border-slate-200 focus:ring-blue-500'
@@ -46,16 +46,16 @@ export default function LoginPage() {
     >
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <div className="inline-block bg-white rounded-2xl p-4 shadow-2xl mb-4">
-            <img src={brecoLogo} alt="Brecos" className="h-16 w-auto" />
+            <img src={brecoLogo} alt="Brecos" className="h-14 sm:h-16 w-auto" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-blue-200">Sign in to your Brecos account</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Welcome Back</h1>
+          <p className="text-blue-200 text-sm sm:text-base">Sign in to your Brecos account</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-5 sm:p-8">
 
           {/* Inline error banner */}
           {error && (

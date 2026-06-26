@@ -41,16 +41,16 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%)' }}>
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <div className="inline-block bg-white rounded-2xl p-4 shadow-2xl mb-4">
-            <img src={brecoLogo} alt="Brecos" className="h-16 w-auto" />
+            <img src={brecoLogo} alt="Brecos" className="h-14 sm:h-16 w-auto" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
-          <p className="text-blue-200">Join Brecos to manage your business records</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Create Account</h1>
+          <p className="text-blue-200 text-sm sm:text-base">Join Brecos to manage your business records</p>
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-5 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
@@ -63,7 +63,7 @@ export default function RegisterPage() {
                   value={form.name}
                   onChange={set('name')}
                   placeholder="Juan dela Cruz"
-                  className="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-9 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -79,7 +79,7 @@ export default function RegisterPage() {
                   value={form.email}
                   onChange={set('email')}
                   placeholder="you@example.com"
-                  className="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-9 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={set('password')}
                   placeholder="Min. 8 characters"
-                  className="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-9 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                   value={form.password_confirmation}
                   onChange={set('password_confirmation')}
                   placeholder="Repeat your password"
-                  className="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-9 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>

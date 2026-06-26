@@ -92,14 +92,14 @@ export default function BillsPage() {
       >
         <Filter size={15} className="text-blue-400 flex-shrink-0" />
 
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-0">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Search by transaction ID, biller, account, category…"
+            placeholder="Search by transaction ID, biller, account…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className={`${inputCls} w-full pl-11 pr-3`}
+            className={`${inputCls} w-full pl-9 pr-3`}
           />
         </div>
 
