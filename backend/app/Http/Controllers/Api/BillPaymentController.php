@@ -15,6 +15,7 @@ class BillPaymentController extends Controller
     public function index(Bill $bill): JsonResponse
     {
         $payments = $bill->payments()->with('paymentChannel')->get();
+        $payments->each(fn ($p) => $p->append('receipt_url'));
         return response()->json($payments);
     }
 
@@ -61,6 +62,7 @@ class BillPaymentController extends Controller
         });
 
         $payment->load('paymentChannel');
+        $payment->append('receipt_url');
 
         return response()->json([
             'payment' => $payment,
@@ -72,6 +74,7 @@ class BillPaymentController extends Controller
     {
         $this->ensurePaymentBelongsToBill($bill, $payment);
         $payment->load('paymentChannel');
+        $payment->append('receipt_url');
         return response()->json($payment);
     }
 
@@ -109,6 +112,7 @@ class BillPaymentController extends Controller
         });
 
         $payment->load('paymentChannel');
+        $payment->append('receipt_url');
 
         return response()->json([
             'payment' => $payment,

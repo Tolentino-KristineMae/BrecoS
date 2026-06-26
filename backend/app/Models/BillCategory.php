@@ -21,8 +21,8 @@ class BillCategory extends Model
         }
         
         try {
-            return \Storage::url($this->logo_path);
-        } catch (\Exception $e) {
+            return \Storage::disk(config('filesystems.default', 'local'))->url($this->logo_path);
+        } catch (\Throwable $e) {
             // Fallback if Storage is not configured
             return null;
         }

@@ -34,13 +34,15 @@ class BillPayment extends Model
         }
         
         try {
-            return \Storage::url($this->receipt_path);
-        } catch (\Exception $e) {
+            return \Storage::disk(config('filesystems.default', 'local'))->url($this->receipt_path);
+        } catch (\Throwable $e) {
             return null;
         }
     }
 
-    protected $appends = ['receipt_url'];
+    // receipt_url is NOT in $appends to avoid Storage calls on every list query.
+    // It is appended conditionally via makeVisible/setAttribute in show endpoints.
+    // protected $appends = ['receipt_url'];
 
     public function bill(): BelongsTo
     {

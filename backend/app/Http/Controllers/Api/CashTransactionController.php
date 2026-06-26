@@ -80,12 +80,21 @@ class CashTransactionController extends Controller
             return $txn;
         });
 
-        return response()->json($txn->load(['receipts', 'proofs', 'proofOfPayments']), 201);
+        $txn->load(['receipts', 'proofs', 'proofOfPayments']);
+        $txn->receipts->each(fn ($f) => $f->append('file_url'));
+        $txn->proofs->each(fn ($f) => $f->append('file_url'));
+        $txn->proofOfPayments->each(fn ($f) => $f->append('file_url'));
+        return response()->json($txn, 201);
     }
 
     public function show(CashTransaction $cashTransaction): JsonResponse
     {
-        return response()->json($cashTransaction->load(['receipts', 'proofs', 'proofOfPayments']));
+        $cashTransaction->load(['receipts', 'proofs', 'proofOfPayments']);
+        // Append file_url only in the detail view to avoid Storage calls on list queries
+        $cashTransaction->receipts->each(fn ($f) => $f->append('file_url'));
+        $cashTransaction->proofs->each(fn ($f) => $f->append('file_url'));
+        $cashTransaction->proofOfPayments->each(fn ($f) => $f->append('file_url'));
+        return response()->json($cashTransaction);
     }
 
     public function update(Request $request, CashTransaction $cashTransaction): JsonResponse
@@ -129,7 +138,11 @@ class CashTransactionController extends Controller
             }
         });
 
-        return response()->json($cashTransaction->fresh(['receipts', 'proofs', 'proofOfPayments']));
+        $fresh = $cashTransaction->fresh(['receipts', 'proofs', 'proofOfPayments']);
+        $fresh->receipts->each(fn ($f) => $f->append('file_url'));
+        $fresh->proofs->each(fn ($f) => $f->append('file_url'));
+        $fresh->proofOfPayments->each(fn ($f) => $f->append('file_url'));
+        return response()->json($fresh);
     }
 
     public function destroy(CashTransaction $cashTransaction): JsonResponse

@@ -14,7 +14,9 @@ class CashTransactionFile extends Model
         'original_name',
     ];
 
-    protected $appends = ['file_url'];
+    // file_url is NOT in $appends to avoid Storage calls on every list query.
+    // It is appended conditionally in detail/show views.
+    // protected $appends = ['file_url'];
 
     public function getFileUrlAttribute(): ?string
     {
@@ -23,8 +25,8 @@ class CashTransactionFile extends Model
         }
         
         try {
-            return \Storage::url($this->file_path);
-        } catch (\Exception $e) {
+            return \Storage::disk(config('filesystems.default', 'local'))->url($this->file_path);
+        } catch (\Throwable $e) {
             return null;
         }
     }

@@ -90,6 +90,9 @@ class BillController extends Controller
     {
         $bill->load(['category', 'payments.paymentChannel']);
 
+        // Append receipt_url on each payment only for the detail view
+        $bill->payments->each(fn ($p) => $p->append('receipt_url'));
+
         // Aggregate payment tubo totals server-side
         $bill->setAttribute('payment_totals', [
             'total_fee'        => (float) $bill->payments->sum('fee_amount'),
