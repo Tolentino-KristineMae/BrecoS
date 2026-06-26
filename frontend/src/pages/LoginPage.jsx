@@ -33,7 +33,7 @@ export default function LoginPage() {
   };
 
   const inputCls = (hasError) =>
-    `w-full pl-10 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
+    `w-full pl-11 pr-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
       hasError
         ? 'border-red-400 bg-red-50 focus:ring-red-400'
         : 'border-slate-200 focus:ring-blue-500'

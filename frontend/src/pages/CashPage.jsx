@@ -121,7 +121,7 @@ export default function CashPage() {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input type="text" placeholder="Search name, code, remarks…"
             value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className={`${inputCls} w-full pl-10 pr-3`} />
+            className={`${inputCls} w-full pl-11 pr-3`} />
         </div>
         <select value={type} onChange={(e) => { setType(e.target.value); setPage(1); }} className={inputCls}>
           <option value="">All Types</option>

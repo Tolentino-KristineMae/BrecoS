@@ -151,7 +151,7 @@ function AutocompleteInput({ icon: Icon, value, onChange, suggestions, placehold
           value={value}
           onChange={(e) => { onChange(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
-          className={`${fieldCls} pl-9`}
+          className={`${fieldCls} pl-11`}
           autoComplete="off"
         />
       </div>

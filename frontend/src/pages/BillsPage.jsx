@@ -99,7 +99,7 @@ export default function BillsPage() {
             placeholder="Search by transaction ID, biller, account, category…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className={`${inputCls} w-full pl-10 pr-3`}
+            className={`${inputCls} w-full pl-11 pr-3`}
           />
         </div>
 
