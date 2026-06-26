@@ -114,9 +114,11 @@ class DashboardController extends Controller
 
             // Calculate tier progress
             $tiers = [
-                ['goal' => 1000, 'label' => '₱1k'],
-                ['goal' => 2000, 'label' => '₱2k'],
-                ['goal' => 3000, 'label' => '₱3k'],
+                ['label' => 'Tier 1', 'target' => 1000, 'color' => '#fbbf24', 'glow' => '#f59e0b'],
+                ['label' => 'Tier 2', 'target' => 2000, 'color' => '#cbd5e1', 'glow' => '#94a3b8'],
+                ['label' => 'Tier 3', 'target' => 3000, 'color' => '#fde68a', 'glow' => '#fcd34d'],
+                ['label' => 'Tier 4', 'target' => 4000, 'color' => '#34d399', 'glow' => '#10b981'],
+                ['label' => 'Tier 5', 'target' => 5000, 'color' => '#60a5fa', 'glow' => '#3b82f6'],
             ];
 
             $currentTier = 0;
@@ -125,19 +127,19 @@ class DashboardController extends Controller
             $tierCeiling = 1000;
 
             foreach ($tiers as $index => $tier) {
-                if ($totalTubo >= $tier['goal']) {
+                if ($totalTubo >= $tier['target']) {
                     $currentTier = $index + 1;
                 }
             }
 
             if ($currentTier < count($tiers)) {
-                $tierBase = $currentTier > 0 ? $tiers[$currentTier - 1]['goal'] : 0;
-                $tierCeiling = $tiers[$currentTier]['goal'];
+                $tierBase = $currentTier > 0 ? $tiers[$currentTier - 1]['target'] : 0;
+                $tierCeiling = $tiers[$currentTier]['target'];
                 $tierProgress = (($totalTubo - $tierBase) / ($tierCeiling - $tierBase)) * 100;
                 $tierProgress = max(0, min(100, $tierProgress));
             } else {
                 $tierProgress = 100;
-                $tierBase = $tiers[count($tiers) - 1]['goal'];
+                $tierBase = $tiers[count($tiers) - 1]['target'];
                 $tierCeiling = $tierBase;
             }
 
