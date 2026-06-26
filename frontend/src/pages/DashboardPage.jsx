@@ -137,15 +137,15 @@ function CashOverviewCard({ cashIn, cashOut }) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
               <p className="text-emerald-200 text-xs mb-1">Transactions</p>
-              <p className="text-2xl font-extrabold text-white">{inCount}</p>
+              <p className="text-2xl font-extrabold text-white whitespace-nowrap">{inCount}</p>
             </div>
             <div>
               <p className="text-emerald-200 text-xs mb-1">Total Amount</p>
-              <p className="text-lg font-bold text-white">₱{fmt(inAmount)}</p>
+              <p className="text-lg font-bold text-white whitespace-nowrap">₱{fmt(inAmount)}</p>
             </div>
             <div>
               <p className="text-emerald-200 text-xs mb-1">Outstanding</p>
-              <p className="text-lg font-bold" style={{ color: inOutstanding > 0 ? '#fcd34d' : '#6ee7b7' }}>
+              <p className="text-lg font-bold whitespace-nowrap" style={{ color: inOutstanding > 0 ? '#fcd34d' : '#6ee7b7' }}>
                 ₱{fmt(inOutstanding)}
               </p>
             </div>
@@ -189,15 +189,15 @@ function CashOverviewCard({ cashIn, cashOut }) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
               <p className="text-red-200 text-xs mb-1">Transactions</p>
-              <p className="text-2xl font-extrabold text-white">{outCount}</p>
+              <p className="text-2xl font-extrabold text-white whitespace-nowrap">{outCount}</p>
             </div>
             <div>
               <p className="text-red-200 text-xs mb-1">Total Amount</p>
-              <p className="text-lg font-bold text-white">₱{fmt(outAmount)}</p>
+              <p className="text-lg font-bold text-white whitespace-nowrap">₱{fmt(outAmount)}</p>
             </div>
             <div>
               <p className="text-red-200 text-xs mb-1">Outstanding</p>
-              <p className="text-lg font-bold" style={{ color: outOutstanding > 0 ? '#fcd34d' : '#6ee7b7' }}>
+              <p className="text-lg font-bold whitespace-nowrap" style={{ color: outOutstanding > 0 ? '#fcd34d' : '#6ee7b7' }}>
                 ₱{fmt(outOutstanding)}
               </p>
             </div>
@@ -622,7 +622,7 @@ export default function DashboardPage() {
   const recent      = billsData.recent       ?? [];
 
   return (
-    <div className="space-y-6 overflow-x-hidden">
+    <div className="space-y-6 overflow-x-hidden w-full">
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
@@ -639,7 +639,7 @@ export default function DashboardPage() {
       ) : (
         <>
           {/* ── Row 1: Overview (left) + Tubo (right, taller) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch overflow-x-hidden w-full">
             {/* Left column: Bills Overview + Cash In/Out */}
             <div className="lg:col-span-2 flex flex-col gap-5">
               <OverviewCard
