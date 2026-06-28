@@ -128,7 +128,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
             <ArrowDownCircle size={20} className="text-white" />
           </div>
           <div>
-            <p className="text-white/70 text-xs font-semibold uppercase tracking-widest leading-none mb-0.5">Cash In</p>
+            <p className="text-white/70 text-xs font-semibold uppercase tracking-widest leading-none mb-1">Cash In</p>
             <p className="text-white text-xs font-medium">All time</p>
           </div>
         </div>
@@ -136,15 +136,15 @@ function CashOverviewCard({ cashIn, cashOut }) {
         <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
-              <p className="text-emerald-200 text-xs mb-1">Transactions</p>
+              <p className="text-emerald-200 text-xs mb-2">Transactions</p>
               <p className="text-2xl font-extrabold text-white whitespace-nowrap">{inCount}</p>
             </div>
             <div>
-              <p className="text-emerald-200 text-xs mb-1">Total Amount</p>
+              <p className="text-emerald-200 text-xs mb-2">Total Amount</p>
               <p className="text-lg font-bold text-white whitespace-nowrap">₱{fmt(inAmount)}</p>
             </div>
             <div>
-              <p className="text-emerald-200 text-xs mb-1">Outstanding</p>
+              <p className="text-emerald-200 text-xs mb-2">Outstanding</p>
               <p className="text-lg font-bold whitespace-nowrap" style={{ color: inOutstanding > 0 ? '#fcd34d' : '#6ee7b7' }}>
                 ₱{fmt(inOutstanding)}
               </p>
@@ -160,7 +160,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
             { label: 'Settled', value: cashIn?.settled_count ?? 0, color: '#6ee7b7' },
           ].map(({ label, value, color }) => (
             <div key={label} className="px-3 py-2.5 text-center">
-              <p className="text-white/50 text-[10px] font-medium mb-0.5">{label}</p>
+              <p className="text-white/50 text-[10px] font-medium mb-1">{label}</p>
               <p className="font-bold text-sm" style={{ color }}>{value}</p>
             </div>
           ))}
@@ -180,7 +180,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
             <ArrowUpCircle size={20} className="text-white" />
           </div>
           <div>
-            <p className="text-white/70 text-xs font-semibold uppercase tracking-widest leading-none mb-0.5">Cash Out</p>
+            <p className="text-white/70 text-xs font-semibold uppercase tracking-widest leading-none mb-1">Cash Out</p>
             <p className="text-white text-xs font-medium">All time</p>
           </div>
         </div>
@@ -188,15 +188,15 @@ function CashOverviewCard({ cashIn, cashOut }) {
         <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
-              <p className="text-red-200 text-xs mb-1">Transactions</p>
+              <p className="text-red-200 text-xs mb-2">Transactions</p>
               <p className="text-2xl font-extrabold text-white whitespace-nowrap">{outCount}</p>
             </div>
             <div>
-              <p className="text-red-200 text-xs mb-1">Total Amount</p>
+              <p className="text-red-200 text-xs mb-2">Total Amount</p>
               <p className="text-lg font-bold text-white whitespace-nowrap">₱{fmt(outAmount)}</p>
             </div>
             <div>
-              <p className="text-red-200 text-xs mb-1">Outstanding</p>
+              <p className="text-red-200 text-xs mb-2">Outstanding</p>
               <p className="text-lg font-bold whitespace-nowrap" style={{ color: outOutstanding > 0 ? '#fcd34d' : '#6ee7b7' }}>
                 ₱{fmt(outOutstanding)}
               </p>
@@ -212,7 +212,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
             { label: 'Settled', value: cashOut?.settled_count ?? 0, color: '#6ee7b7' },
           ].map(({ label, value, color }) => (
             <div key={label} className="px-3 py-2.5 text-center">
-              <p className="text-white/50 text-[10px] font-medium mb-0.5">{label}</p>
+              <p className="text-white/50 text-[10px] font-medium mb-1">{label}</p>
               <p className="font-bold text-sm" style={{ color }}>{value}</p>
             </div>
           ))}

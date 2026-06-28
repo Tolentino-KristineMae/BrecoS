@@ -94,21 +94,23 @@ export default function CashPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-slate-800">Cash Transactions</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Track cash in and cash out with tubo</p>
+          <p className="text-sm text-slate-400 mt-1">Track cash in and cash out with tubo</p>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
+        <div className="flex gap-2.5 w-full sm:w-auto flex-shrink-0">
           <button onClick={() => navigate('/cash/new-in')}
-            className="flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl text-sm font-semibold active:scale-95 flex-1"
+            className="flex items-center justify-center gap-2 text-white px-5 py-2.5 rounded-xl text-sm font-semibold active:scale-95 flex-1 sm:flex-initial whitespace-nowrap"
             style={{ background: 'linear-gradient(135deg, #059669, #10b981)', boxShadow: '0 4px 12px rgba(16,185,129,0.3)' }}>
-            <ArrowDownCircle size={15} /> Cash In
+            <ArrowDownCircle size={16} />
+            <span>Cash In</span>
           </button>
           <button onClick={() => navigate('/cash/new-out')}
-            className="flex items-center justify-center gap-2 text-white px-4 py-2.5 rounded-xl text-sm font-semibold active:scale-95 flex-1"
+            className="flex items-center justify-center gap-2 text-white px-5 py-2.5 rounded-xl text-sm font-semibold active:scale-95 flex-1 sm:flex-initial whitespace-nowrap"
             style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444)', boxShadow: '0 4px 12px rgba(239,68,68,0.3)' }}>
-            <ArrowUpCircle size={15} /> Cash Out
+            <ArrowUpCircle size={16} />
+            <span>Cash Out</span>
           </button>
         </div>
       </div>
