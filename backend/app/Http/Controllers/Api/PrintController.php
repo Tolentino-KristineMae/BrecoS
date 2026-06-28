@@ -37,7 +37,7 @@ class PrintController extends Controller
     {
         try {
             $query = Bill::with(['category', 'payments.paymentChannel'])
-                ->orderByDesc('created_at');
+                ->orderBy('created_at', 'desc');
 
             if ($search = $request->query('search')) {
                 $s = "%{$search}%";
@@ -59,8 +59,8 @@ class PrintController extends Controller
 
             if ($month = $request->query('month')) {
                 [$year, $mon] = explode('-', $month);
-                $query->whereRaw("EXTRACT(YEAR FROM created_at) = ?", [$year])
-                      ->whereRaw("EXTRACT(MONTH FROM created_at) = ?", [$mon]);
+                $query->whereYear('created_at', $year)
+                      ->whereMonth('created_at', $mon);
             }
 
             $bills = $query->get();
@@ -93,36 +93,35 @@ class PrintController extends Controller
             $month = $request->query('month');
 
             // Bills
-            $billQuery = Bill::with(['category'])->orderByDesc('created_at');
+            $billQuery = Bill::with(['category'])->orderBy('created_at', 'desc');
             if ($month) {
                 [$y, $m] = explode('-', $month);
-                $billQuery->whereRaw("EXTRACT(YEAR FROM created_at) = ?", [$y])
-                          ->whereRaw("EXTRACT(MONTH FROM created_at) = ?", [$m]);
+                $billQuery->whereYear('created_at', $y)
+                          ->whereMonth('created_at', $m);
             }
             if ($bs = $request->query('bill_status')) {
                 $billQuery->where('status', $bs);
             }
             $bills = $billQuery->get();
 
-            // Cash - PostgreSQL compatible ordering
-            $cashQuery = CashTransaction::orderByRaw("
-                CASE status 
-                    WHEN 'pending' THEN 1 
-                    WHEN 'paid' THEN 2 
-                    WHEN 'settled' THEN 3 
-                    ELSE 4 
-                END
-            ")->orderByDesc('transaction_date');
+            // Cash - Database agnostic ordering
+            $cashQuery = CashTransaction::orderBy('transaction_date', 'desc');
             
             if ($month) {
                 [$y, $m] = explode('-', $month);
-                $cashQuery->whereRaw("EXTRACT(YEAR FROM transaction_date) = ?", [$y])
-                          ->whereRaw("EXTRACT(MONTH FROM transaction_date) = ?", [$m]);
+                $cashQuery->whereYear('transaction_date', $y)
+                          ->whereMonth('transaction_date', $m);
             }
             if ($cs = $request->query('cash_status')) {
                 $cashQuery->where('status', $cs);
             }
             $cashTransactions = $cashQuery->get();
+
+            // Sort by status in PHP for database agnostic solution
+            $cashTransactions = $cashTransactions->sortBy(function($txn) {
+                $order = ['pending' => 1, 'paid' => 2, 'settled' => 3];
+                return $order[$txn->status] ?? 4;
+            })->values();
 
             return view('print.all-transactions', compact('bills', 'cashTransactions'));
         } catch (\Exception $e) {
@@ -139,15 +138,8 @@ class PrintController extends Controller
     public function cashList(Request $request)
     {
         try {
-            // PostgreSQL compatible ordering
-            $query = CashTransaction::orderByRaw("
-                CASE status 
-                    WHEN 'pending' THEN 1 
-                    WHEN 'paid' THEN 2 
-                    WHEN 'settled' THEN 3 
-                    ELSE 4 
-                END
-            ")->orderByDesc('transaction_date');
+            // Database agnostic ordering
+            $query = CashTransaction::orderBy('transaction_date', 'desc');
 
             if ($type = $request->query('type')) {
                 $query->where('type', $type);
@@ -159,11 +151,17 @@ class PrintController extends Controller
 
             if ($month = $request->query('month')) {
                 [$year, $mon] = explode('-', $month);
-                $query->whereRaw("EXTRACT(YEAR FROM transaction_date) = ?", [$year])
-                      ->whereRaw("EXTRACT(MONTH FROM transaction_date) = ?", [$mon]);
+                $query->whereYear('transaction_date', $year)
+                      ->whereMonth('transaction_date', $mon);
             }
 
             $transactions = $query->get();
+
+            // Sort by status in PHP for database agnostic solution
+            $transactions = $transactions->sortBy(function($txn) {
+                $order = ['pending' => 1, 'paid' => 2, 'settled' => 3];
+                return $order[$txn->status] ?? 4;
+            })->values();
 
             $filters = [
                 'type'   => $request->query('type', 'all'),
