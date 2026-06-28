@@ -30,7 +30,7 @@ function AmountPicker({ value, onChange }) {
       ))}
       {showOther ? (
         <input type="number" min="0" step="0.01" placeholder="0.00" autoFocus
-          value={isOther ? value : ''}
+          value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-24 border border-blue-400 ring-1 ring-blue-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none flex-shrink-0" />
       ) : (
