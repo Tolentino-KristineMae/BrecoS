@@ -4,6 +4,7 @@ import { FileText, ChevronLeft, ChevronRight, TrendingUp,
   ReceiptText, ArrowDownCircle, ArrowUpCircle,
 } from 'lucide-react';
 import { getDashboardSummary, getBills } from '../api/bills';
+import { getCashTransactions } from '../api/cash';
 import StatusBadge from '../components/StatusBadge';
 import CategoryDisplay from '../components/CategoryDisplay';
 import Spinner from '../components/Spinner';
@@ -591,6 +592,8 @@ export default function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState(toYearMonth(today));
   const [billFilterMonth, setBillFilterMonth] = useState(''); // Empty for all
   const [billSortOrder, setBillSortOrder] = useState('desc');
+  const [cashFilterMonth, setCashFilterMonth] = useState('');
+  const [cashSortOrder, setCashSortOrder] = useState('desc');
   const isCurrentMonth = selectedMonth === toYearMonth(today);
 
   const prevMonth = () => {
@@ -624,6 +627,14 @@ export default function DashboardPage() {
   const { data: billsList, isLoading: billsLoading } = useQuery({
     queryKey: ['bills', billFilterMonth, billSortOrder],
     queryFn: () => getBills({ month: billFilterMonth, sort: billSortOrder, per_page: 50 }),
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
+  });
+
+  // Query for filtered cash transactions
+  const { data: cashList, isLoading: cashLoading } = useQuery({
+    queryKey: ['cash', cashFilterMonth, cashSortOrder],
+    queryFn: () => getCashTransactions({ month: cashFilterMonth, sort: cashSortOrder, per_page: 50 }),
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
   });
@@ -783,7 +794,123 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ── Row 4: Tubo History ── */}
+          {/* ── Row 4: Filtered Cash Transactions ── */}
+          <div
+            className="bg-white rounded-2xl overflow-hidden mt-6"
+            style={{ boxShadow: '0 2px 16px rgba(37,99,235,0.07)', border: '1px solid #e0e7ff' }}
+          >
+            {/* Table header */}
+            <div
+              className="px-6 py-4 flex items-center justify-between flex-wrap gap-3"
+              style={{ borderBottom: '1px solid #f1f5ff' }}
+            >
+              <div>
+                <h2 className="font-semibold text-slate-800">Filtered Cash Transactions</h2>
+                <p className="text-xs text-slate-400 mt-0.5">{cashList?.data?.length || 0} records</p>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <select
+                  value={cashFilterMonth}
+                  onChange={(e) => setCashFilterMonth(e.target.value)}
+                  className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">All Months</option>
+                  {getAvailableMonths().map((month) => (
+                    <option key={month} value={month}>
+                      {formatMonth(month)}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={cashSortOrder}
+                  onChange={(e) => setCashSortOrder(e.target.value)}
+                  className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="desc">Newest First</option>
+                  <option value="asc">Oldest First</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr style={{ background: '#f8faff' }}>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">Transaction Code</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">Person</th>
+                    <th className="px-6 py-3 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cashList?.data?.map((txn) => (
+                    <tr key={txn.id} className="border-t border-slate-50 hover:bg-blue-50/30" style={{ transition: 'background 120ms' }}>
+                      <td className="px-6 py-3.5 whitespace-nowrap">
+                        <span className="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">{txn.transaction_code}</span>
+                      </td>
+                      <td className="px-6 py-3.5 whitespace-nowrap">
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${txn.type === 'cash_in' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                          {txn.type === 'cash_in' ? 'Cash In' : 'Cash Out'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3.5 font-medium text-slate-700 whitespace-nowrap">{txn.person_name}</td>
+                      <td className="px-6 py-3.5 text-right font-bold text-slate-800 whitespace-nowrap">
+                        ₱{parseFloat(txn.amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-6 py-3.5 whitespace-nowrap">
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                          txn.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                          txn.status === 'paid' ? 'bg-blue-100 text-blue-700' :
+                          'bg-emerald-100 text-emerald-700'
+                        }`}>
+                          {txn.status.charAt(0).toUpperCase() + txn.status.slice(1)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!cashList?.data || cashList.data.length === 0) && (
+                    <tr><td colSpan={5} className="text-center py-16 text-slate-400">
+                      <FileText size={32} className="mx-auto mb-2 opacity-30" />
+                      <p className="text-sm font-medium">No cash transactions yet</p>
+                    </td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {/* Mobile cards */}
+            <div className="sm:hidden divide-y divide-slate-50">
+              {(!cashList?.data || cashList.data.length === 0) ? (
+                <div className="text-center py-12 text-slate-400">
+                  <FileText size={32} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm font-medium">No cash transactions yet</p>
+                </div>
+              ) : cashList.data.map((txn) => (
+                <div key={txn.id} className="px-4 py-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">{txn.transaction_code}</span>
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${txn.type === 'cash_in' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                      {txn.type === 'cash_in' ? 'Cash In' : 'Cash Out'}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium text-slate-700">{txn.person_name}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="font-bold text-slate-800 text-sm">₱{parseFloat(txn.amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}</p>
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                      txn.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                      txn.status === 'paid' ? 'bg-blue-100 text-blue-700' :
+                      'bg-emerald-100 text-emerald-700'
+                    }`}>
+                      {txn.status.charAt(0).toUpperCase() + txn.status.slice(1)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Row 5: Tubo History ── */}
           <TuboHistory monthlyData={tuboData.monthly} isLoading={isLoading} />
         </>
       )}

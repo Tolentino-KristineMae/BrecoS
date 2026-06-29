@@ -15,8 +15,15 @@ class CashTransactionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = CashTransaction::with(['receipts', 'proofs'])
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'paid' THEN 1 WHEN 'settled' THEN 2 ELSE 3 END")
-            ->orderByDesc('created_at');
+            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'paid' THEN 1 WHEN 'settled' THEN 2 ELSE 3 END");
+        
+        // Sorting
+        $sortOrder = $request->query('sort', 'desc');
+        if ($sortOrder === 'asc') {
+            $query->orderBy('created_at');
+        } else {
+            $query->orderByDesc('created_at');
+        }
 
         if ($type = $request->query('type')) {
             $query->where('type', $type);
