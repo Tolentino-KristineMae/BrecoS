@@ -122,9 +122,10 @@ function CashOverviewCard({ cashIn, cashOut }) {
           background: 'linear-gradient(135deg, #064e3b 0%, #059669 100%)',
           boxShadow: '0 8px 32px rgba(5,150,105,0.2)',
         }}>
-        <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
+        <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/5 pointer-events-none" />
+        <div className="absolute right-16 -bottom-10 w-28 h-28 rounded-full bg-white/5 pointer-events-none" />
 
-        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 flex items-center gap-3 relative">
+        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 flex items-center justify-between relative">
           <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <ArrowDownCircle size={20} className="text-white" />
           </div>
@@ -137,7 +138,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
         <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
-              <p className="text-emerald-200 text-xs mb-2">Transactions</p>
+              <p className="text-emerald-200 text-xs mb-1">Transactions</p>
               <p className="text-2xl font-extrabold text-white whitespace-nowrap">{inCount}</p>
             </div>
             <div>
@@ -153,7 +154,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 divide-x divide-white/10"
+        <div className="grid grid-cols-3 divide-x divide-white/10 relative"
           style={{ background: 'rgba(0,0,0,0.18)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           {[
             { label: 'Pending', value: cashIn?.pending_count ?? 0, color: '#fcd34d' },
@@ -174,9 +175,10 @@ function CashOverviewCard({ cashIn, cashOut }) {
           background: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)',
           boxShadow: '0 8px 32px rgba(220,38,38,0.2)',
         }}>
-        <div className="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
+        <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/5 pointer-events-none" />
+        <div className="absolute right-16 -bottom-10 w-28 h-28 rounded-full bg-white/5 pointer-events-none" />
 
-        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 flex items-center gap-3 relative">
+        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 flex items-center justify-between relative">
           <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <ArrowUpCircle size={20} className="text-white" />
           </div>
@@ -189,7 +191,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
         <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
             <div>
-              <p className="text-red-200 text-xs mb-2">Transactions</p>
+              <p className="text-red-200 text-xs mb-1">Transactions</p>
               <p className="text-2xl font-extrabold text-white whitespace-nowrap">{outCount}</p>
             </div>
             <div>
@@ -205,7 +207,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 divide-x divide-white/10"
+        <div className="grid grid-cols-3 divide-x divide-white/10 relative"
           style={{ background: 'rgba(0,0,0,0.18)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
           {[
             { label: 'Pending', value: cashOut?.pending_count ?? 0, color: '#fcd34d' },
@@ -305,7 +307,7 @@ function TuboCard({ month, onPrev, onNext, isCurrentMonth, tuboData, isLoading }
       </div>
 
       {/* ── Body ── */}
-      <div className="flex-1 flex flex-col px-4 sm:px-6 py-4 relative gap-4 justify-center">
+      <div className="flex-1 flex flex-col px-4 sm:px-6 py-3 relative gap-3 justify-center">
         {isLoading ? (
           <div className="flex flex-col gap-3">
             <div className="h-10 w-36 bg-white/20 rounded-xl animate-pulse" />
