@@ -15,8 +15,15 @@ class BillController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Bill::with(['category', 'payments.paymentChannel'])
-            ->orderByDesc('created_at');
+        $query = Bill::with(['category', 'payments.paymentChannel']);
+        
+        // Sorting
+        $sortOrder = $request->query('sort', 'desc');
+        if ($sortOrder === 'asc') {
+            $query->orderBy('created_at');
+        } else {
+            $query->orderByDesc('created_at');
+        }
 
         // ── Search / Filter ──────────────────────────────────────────────────
         if ($search = $request->query('search')) {

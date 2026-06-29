@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FileText, ChevronLeft, ChevronRight, TrendingUp,
   ReceiptText, ArrowDownCircle, ArrowUpCircle,
 } from 'lucide-react';
-import { getDashboardSummary } from '../api/bills';
+import { getDashboardSummary, getBills } from '../api/bills';
 import StatusBadge from '../components/StatusBadge';
 import CategoryDisplay from '../components/CategoryDisplay';
 import Spinner from '../components/Spinner';
@@ -589,6 +589,8 @@ function TuboHistory({ monthlyData, isLoading }) {
 export default function DashboardPage() {
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(toYearMonth(today));
+  const [billFilterMonth, setBillFilterMonth] = useState(''); // Empty for all
+  const [billSortOrder, setBillSortOrder] = useState('desc');
   const isCurrentMonth = selectedMonth === toYearMonth(today);
 
   const prevMonth = () => {
@@ -600,12 +602,30 @@ export default function DashboardPage() {
     setSelectedMonth(toYearMonth(new Date(y, m)));
   };
 
+  // Get available months for dropdown
+  const getAvailableMonths = () => {
+    const months = [];
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      months.push(toYearMonth(date));
+    }
+    return months;
+  };
+
   // OPTIMIZED: Single query for all dashboard data with caching
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard-summary', selectedMonth],
     queryFn: () => getDashboardSummary({ month: selectedMonth }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000, // 10 minutes
+  });
+
+  // Query for filtered bills
+  const { data: billsList, isLoading: billsLoading } = useQuery({
+    queryKey: ['bills', billFilterMonth, billSortOrder],
+    queryFn: () => getBills({ month: billFilterMonth, sort: billSortOrder, per_page: 50 }),
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
   });
 
   const billsData = data?.bills ?? {};
@@ -619,7 +639,7 @@ export default function DashboardPage() {
   const totalAmount = parseFloat(billsData.total_amount ?? 0);
   const totalPaid   = parseFloat(billsData.total_paid   ?? 0);
   const totalBal    = parseFloat(billsData.total_bal    ?? 0);
-  const recent      = billsData.recent       ?? [];
+  const recent      = billsList?.data ?? billsData.recent ?? [];
 
   return (
     <div className="space-y-6 overflow-x-hidden w-full">
@@ -662,26 +682,48 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ── Row 3: Recent bills ── */}
+          {/* ── Row 3: Filtered bills ── */}
           <div
             className="bg-white rounded-2xl overflow-hidden"
             style={{ boxShadow: '0 2px 16px rgba(37,99,235,0.07)', border: '1px solid #e0e7ff' }}
           >
             {/* Table header */}
             <div
-              className="px-6 py-4 flex items-center justify-between"
+              className="px-6 py-4 flex items-center justify-between flex-wrap gap-3"
               style={{ borderBottom: '1px solid #f1f5ff' }}
             >
               <div>
-                <h2 className="font-semibold text-slate-800">Recent Bills</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Latest {recent.length} records</p>
+                <h2 className="font-semibold text-slate-800">Filtered Bills</h2>
+                <p className="text-xs text-slate-400 mt-0.5">{recent.length} records</p>
               </div>
-              <span
-                className="text-xs font-semibold px-3 py-1 rounded-full"
-                style={{ background: '#eff6ff', color: '#2563eb' }}
-              >
-                {total} total
-              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <select
+                  value={billFilterMonth}
+                  onChange={(e) => setBillFilterMonth(e.target.value)}
+                  className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">All Months</option>
+                  {getAvailableMonths().map((month) => (
+                    <option key={month} value={month}>
+                      {formatMonth(month)}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={billSortOrder}
+                  onChange={(e) => setBillSortOrder(e.target.value)}
+                  className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="desc">Newest First</option>
+                  <option value="asc">Oldest First</option>
+                </select>
+                <span
+                  className="text-xs font-semibold px-3 py-1 rounded-full"
+                  style={{ background: '#eff6ff', color: '#2563eb' }}
+                >
+                  {total} total
+                </span>
+              </div>
             </div>
 
             {/* Desktop table */}
