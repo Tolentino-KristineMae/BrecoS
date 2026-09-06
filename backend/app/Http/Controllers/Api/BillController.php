@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Bill;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class BillController extends Controller
 {
@@ -134,11 +136,21 @@ class BillController extends Controller
     }
 
     /**
-     * Delete a bill and all its payments.
+     * Delete a bill, its payment receipt files, and all its payments.
      */
     public function destroy(Bill $bill): JsonResponse
     {
-        $bill->delete();
+        DB::transaction(function () use ($bill) {
+            $receiptPaths = $bill->payments()
+                ->whereNotNull('receipt_path')
+                ->pluck('receipt_path')
+                ->filter()
+                ->all();
+            if (!empty($receiptPaths)) {
+                Storage::delete($receiptPaths);
+            }
+            $bill->delete();
+        });
         return response()->json(['message' => 'Bill deleted.']);
     }
 

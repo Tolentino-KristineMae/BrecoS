@@ -73,13 +73,31 @@ export default function CashPage() {
   const deleteMutation = useMutation({
     mutationFn: deleteCashTransaction,
     retry: false,
+    onMutate: async (txnId) => {
+      await qc.cancelQueries({ queryKey: ['cash'] });
+      const previous = qc.getQueryData(['cash', { search, type, status, month, page }]);
+      if (previous?.data) {
+        qc.setQueryData(['cash', { search, type, status, month, page }], {
+          ...previous,
+          data: previous.data.filter((t) => t.id !== txnId),
+          total: Math.max(0, (previous.total ?? 0) - 1),
+          to: Math.max(previous.from ?? 0, (previous.to ?? 0) - 1),
+        });
+      }
+      return { previous };
+    },
+    onError: (e, _txnId, ctx) => {
+      if (ctx?.previous) {
+        qc.setQueryData(['cash', { search, type, status, month, page }], ctx.previous);
+      }
+      toast.error(e.response?.data?.message ?? 'Failed to delete transaction.');
+    },
     onSuccess: () => {
       toast.success('Transaction deleted.');
-      qc.resetQueries({ queryKey: ['cash'] });
+      qc.invalidateQueries({ queryKey: ['cash'] });
       qc.removeQueries({ queryKey: ['cash-txn'] });
       if (detailId) closeModal();
     },
-    onError: (e) => toast.error(e.response?.data?.message ?? 'Failed to delete transaction.'),
   });
 
   const txns = data?.data ?? [];

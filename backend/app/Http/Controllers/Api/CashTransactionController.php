@@ -154,11 +154,13 @@ class CashTransactionController extends Controller
 
     public function destroy(CashTransaction $cashTransaction): JsonResponse
     {
-        // Delete all files from storage
-        foreach ($cashTransaction->files as $file) {
-            Storage::delete($file->file_path);
-        }
-        $cashTransaction->delete();
+        DB::transaction(function () use ($cashTransaction) {
+            $filePaths = $cashTransaction->files()->pluck('file_path')->filter()->all();
+            if (!empty($filePaths)) {
+                Storage::delete($filePaths);
+            }
+            $cashTransaction->delete();
+        });
         return response()->json(['message' => 'Transaction deleted.']);
     }
 

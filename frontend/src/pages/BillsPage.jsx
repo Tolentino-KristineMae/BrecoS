@@ -47,12 +47,30 @@ export default function BillsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: deleteBill,
+    onMutate: async (billId) => {
+      await qc.cancelQueries({ queryKey: ['bills'] });
+      const previous = qc.getQueryData(['bills', { search, category_id: categoryId, status, month, page }]);
+      if (previous?.data) {
+        qc.setQueryData(['bills', { search, category_id: categoryId, status, month, page }], {
+          ...previous,
+          data: previous.data.filter((b) => b.id !== billId),
+          total: Math.max(0, (previous.total ?? 0) - 1),
+          to: Math.max(previous.from ?? 0, (previous.to ?? 0) - 1),
+        });
+      }
+      return { previous };
+    },
+    onError: (_err, _billId, ctx) => {
+      if (ctx?.previous) {
+        qc.setQueryData(['bills', { search, category_id: categoryId, status, month, page }], ctx.previous);
+      }
+      toast.error('Failed to delete bill.');
+    },
     onSuccess: () => {
       toast.success('Bill deleted.');
       qc.invalidateQueries({ queryKey: ['bills'] });
       qc.invalidateQueries({ queryKey: ['bill-stats'] });
     },
-    onError: () => toast.error('Failed to delete bill.'),
   });
 
   const handleDelete = (e, bill) => {
