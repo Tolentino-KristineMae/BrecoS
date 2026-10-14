@@ -9,12 +9,12 @@ export default function Modal({ title, onClose, children, size = 'md' }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
+      className="modal-overlay fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
       style={{ background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className={`bg-white w-full ${widths[size]} flex flex-col
+        className={`modal-content bg-white w-full ${widths[size]} flex flex-col
           rounded-t-2xl sm:rounded-2xl
           max-h-[92vh] sm:max-h-[92vh]`}
         style={{ boxShadow: '0 25px 60px rgba(37,99,235,0.18), 0 8px 24px rgba(0,0,0,0.12)' }}
@@ -35,7 +35,7 @@ export default function Modal({ title, onClose, children, size = 'md' }) {
         </div>
 
         {/* Body */}
-        <div className="overflow-y-auto px-4 sm:px-5 py-4 sm:py-5 flex-1">{children}</div>
+        <div className="modal-body overflow-y-auto px-4 sm:px-5 py-4 sm:py-5 flex-1">{children}</div>
       </div>
     </div>
   );

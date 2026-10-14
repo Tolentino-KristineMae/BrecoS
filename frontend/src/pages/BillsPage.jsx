@@ -105,7 +105,7 @@ export default function BillsPage() {
 
       {/* ── Filters ── */}
       <div
-        className="bg-white rounded-2xl p-4 flex flex-wrap gap-3 items-center"
+        className="surface-card bg-white rounded-2xl p-4 flex flex-wrap gap-3 items-center"
         style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 8px rgba(37,99,235,0.05)' }}
       >
         <Filter size={15} className="text-blue-400 flex-shrink-0" />
@@ -171,7 +171,7 @@ export default function BillsPage() {
 
       {/* ── Table ── */}
       <div
-        className="bg-white rounded-2xl overflow-hidden"
+        className="surface-card bg-white rounded-2xl overflow-hidden"
         style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}
       >
         {isLoading ? (

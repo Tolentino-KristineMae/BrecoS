@@ -134,7 +134,7 @@ export default function CashPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl p-4 flex flex-wrap gap-3 items-center"
+      <div className="surface-card bg-white rounded-2xl p-4 flex flex-wrap gap-3 items-center"
         style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 8px rgba(37,99,235,0.05)' }}>
         <Filter size={15} className="text-blue-400 flex-shrink-0" />
         <div className="relative flex-1 min-w-0">
@@ -171,7 +171,7 @@ export default function CashPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl overflow-hidden"
+      <div className="surface-card bg-white rounded-2xl overflow-hidden"
         style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}>
         {isLoading ? (
           <div className="flex justify-center py-24"><Spinner /></div>
