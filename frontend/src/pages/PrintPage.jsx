@@ -122,7 +122,7 @@ export default function PrintPage() {
       </div>
 
       {/* What to print */}
-      <div className="bg-white rounded-2xl p-5 space-y-3"
+      <div className="surface-card bg-white rounded-2xl p-5 space-y-3"
         style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}>
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">What to print</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -133,7 +133,7 @@ export default function PrintPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl p-5 space-y-4"
+      <div className="surface-card bg-white rounded-2xl p-5 space-y-4"
         style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}>
         <div className="flex items-center gap-2">
           <Filter size={14} className="text-blue-400" />

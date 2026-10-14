@@ -1,28 +1,61 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Settings, Printer, ArrowLeftRight, PanelLeftClose, PanelLeftOpen, Menu, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileText, Settings, Printer, ArrowLeftRight, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X, ChevronRight, CalendarDays } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { logout } from '../api/auth';
 import brecoLogo from '../assets/Brecos-logo.png';
 
 const navItems = [
-  { to: '/',         label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/bills',    label: 'Bills',     icon: FileText },
-  { to: '/cash',     label: 'Cash',      icon: ArrowLeftRight },
-  { to: '/print',    label: 'Print',     icon: Printer },
-  { to: '/settings', label: 'Settings',  icon: Settings },
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/bills', label: 'Bills', icon: FileText },
+  { to: '/cash', label: 'Cash', icon: ArrowLeftRight },
+  { to: '/print', label: 'Print', icon: Printer },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
+
+function SidebarContent({ collapsed, user, onNavigate, onLogout, pending, onClose }) {
+  return (
+    <>
+      <div className="sidebar-brand">
+        <NavLink to="/" onClick={onNavigate} aria-label="Brecos dashboard">
+          <img src={brecoLogo} alt="Brecos" />
+        </NavLink>
+        {onClose && <button className="icon-control" onClick={onClose} aria-label="Close navigation"><X size={20} /></button>}
+      </div>
+      <nav aria-label="Main navigation" className="sidebar-navigation">
+        <p className="sidebar-caption" aria-hidden="true">{collapsed ? '•••' : 'WORKSPACE'}</p>
+        {navItems.map(({ to, label, icon: Icon }) => (
+          <NavLink key={to} to={to} end={to === '/'} onClick={onNavigate}
+            title={collapsed ? label : undefined} aria-label={collapsed ? label : undefined}
+            className={({ isActive }) => `sidebar-link ${isActive ? 'is-active' : ''}`}>
+            <Icon size={19} strokeWidth={1.8} />
+            {!collapsed && <><span>{label}</span><ChevronRight className="sidebar-chevron" size={14} /></>}
+          </NavLink>
+        ))}
+      </nav>
+      <div className="sidebar-bottom">
+        <button onClick={onLogout} disabled={pending} className="sidebar-link sidebar-logout" aria-label="Log out" title={collapsed ? 'Log out' : undefined}>
+          <LogOut size={18} />{!collapsed && <span>{pending ? 'Logging out…' : 'Log out'}</span>}
+        </button>
+        <div className="sidebar-user">
+          <div className="user-avatar">{user?.name?.[0]?.toUpperCase() ?? 'B'}</div>
+          {!collapsed && <div className="min-w-0"><p className="text-sm font-semibold truncate">{user?.name ?? 'Admin'}</p><p className="text-xs text-blue-200/80 truncate">{user?.email ?? 'Brecos System'}</p></div>}
+        </div>
+      </div>
+    </>
+  );
+}
 
 export default function Layout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const drawerRef = useRef(null);
+  const menuRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   const qc = useQueryClient();
-
   const user = JSON.parse(localStorage.getItem('brecos_user') ?? '{}');
-
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSettled: () => {
@@ -34,280 +67,63 @@ export default function Layout() {
     },
   });
 
-  // Close mobile drawer on route change
-  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const menuButton = menuRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const drawer = drawerRef.current;
+    const focusFrame = requestAnimationFrame(() => drawer.querySelector('button')?.focus());
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setMobileOpen(false);
+      if (event.key !== 'Tab') return;
+      const elements = [...drawer.querySelectorAll('a, button:not(:disabled)')];
+      const first = elements[0];
+      const last = elements.at(-1);
+      if (!drawer.contains(document.activeElement)) { event.preventDefault(); first.focus(); }
+      else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const onResize = () => { if (desktop.matches) setMobileOpen(false); };
+    desktop.addEventListener('change', onResize);
+    return () => {
+      cancelAnimationFrame(focusFrame);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      desktop.removeEventListener('change', onResize);
+      menuButton?.focus();
+    };
+  }, [mobileOpen]);
 
-  const currentPage = navItems.find(n =>
-    n.to === '/' ? location.pathname === '/' : location.pathname.startsWith(n.to)
-  )?.label ?? 'Dashboard';
-
-  const desktopW = collapsed ? '72px' : '256px';
-
-  const SidebarContent = ({ mobile = false }) => (
-    <>
-      {/* Logo */}
-      <div
-        className="relative flex items-center overflow-hidden flex-shrink-0"
-        style={{
-          background: '#ffffff',
-          borderBottom: '1px solid rgba(226,232,240,0.8)',
-          height: '80px', minHeight: '80px',
-        }}
-      >
-        {!mobile && collapsed ? (
-          <img src={brecoLogo} alt="Brecos" className="absolute object-contain"
-            style={{ left: '10px', right: '10px', maxHeight: '40px', width: 'calc(100% - 20px)' }} />
-        ) : (
-          <img src={brecoLogo} alt="Brecos" className="absolute object-contain"
-            style={{ left: '20px', right: '20px', maxHeight: '52px', width: 'calc(100% - 40px)' }} />
-        )}
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/'}
-            title={!mobile && collapsed ? label : undefined}
-            className={({ isActive }) =>
-              `group relative flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-150 whitespace-nowrap ${
-                !mobile && collapsed ? 'justify-center px-0' : 'px-4'
-              } ${
-                isActive
-                  ? 'bg-white text-blue-700 shadow-md shadow-blue-900/30'
-                  : 'text-blue-200/80 hover:bg-white/10 hover:text-white'
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <span
-                  className="absolute left-0 w-1 rounded-r-full z-10"
-                  style={{
-                    height: isActive ? '28px' : '0px',
-                    background: '#ffffff',
-                    opacity: isActive ? 1 : 0,
-                    transition: 'height 150ms ease, opacity 150ms ease',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                  }}
-                />
-                <Icon size={18}
-                  className={`flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-blue-300 group-hover:text-white'}`}
-                />
-                <span
-                  className="overflow-hidden"
-                  style={{
-                    maxWidth: (!mobile && collapsed) ? '0px' : '160px',
-                    opacity: (!mobile && collapsed) ? 0 : 1,
-                    transition: 'max-width 220ms cubic-bezier(0.4,0,0.2,1), opacity 150ms ease',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {label}
-                </span>
-              </>
-            )}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* Logout button - positioned above user info */}
-      <div className="px-2 pb-2 flex-shrink-0">
-        <button
-          onClick={() => logoutMutation.mutate()}
-          disabled={logoutMutation.isPending}
-          className="w-full group relative flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-150 whitespace-nowrap text-red-200/80 hover:bg-white/10 hover:text-red-300"
-          style={{
-            justifyContent: (!mobile && collapsed) ? 'center' : 'flex-start',
-            padding: (!mobile && collapsed) ? '12px 0' : '12px 16px',
-          }}
-        >
-          <LogOut size={18} className="flex-shrink-0" />
-          <span
-            className="overflow-hidden"
-            style={{
-              maxWidth: (!mobile && collapsed) ? '0px' : '160px',
-              opacity: (!mobile && collapsed) ? 0 : 1,
-              transition: 'max-width 220ms cubic-bezier(0.4,0,0.2,1), opacity 150ms ease',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Logout
-          </span>
-        </button>
-      </div>
-
-      {/* Footer — user info only */}
-      <div className="px-2 py-3 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-        <div
-          className="rounded-xl flex items-center overflow-hidden"
-          style={{
-            background: 'rgba(255,255,255,0.06)',
-            padding: (!mobile && collapsed) ? '8px 0' : '10px 12px',
-            justifyContent: (!mobile && collapsed) ? 'center' : 'flex-start',
-            gap: (!mobile && collapsed) ? '0' : '10px',
-            transition: 'padding 220ms cubic-bezier(0.4,0,0.2,1)',
-          }}
-        >
-          {/* Avatar */}
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow">
-            <span className="text-white text-xs font-bold">
-              {user?.name?.[0]?.toUpperCase() ?? 'B'}
-            </span>
-          </div>
-
-          {/* Name + version */}
-          <div style={{
-            flex: 1,
-            maxWidth: (!mobile && collapsed) ? '0px' : '120px',
-            opacity: (!mobile && collapsed) ? 0 : 1,
-            overflow: 'hidden',
-            transition: 'max-width 220ms cubic-bezier(0.4,0,0.2,1), opacity 150ms ease',
-            whiteSpace: 'nowrap',
-          }}>
-            <p className="text-xs text-white/80 font-semibold leading-none truncate">{user?.name ?? 'Admin'}</p>
-            <p className="text-[10px] text-blue-300/60 mt-0.5">{user?.email ?? 'Brecos System'}</p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  const currentPage = navItems.find(n => n.to === '/' ? location.pathname === '/' : location.pathname.startsWith(n.to))?.label ?? 'Dashboard';
+  const sidebarProps = { user, onLogout: () => logoutMutation.mutate(), pending: logoutMutation.isPending };
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#f0f4ff' }}>
-
-      {/* ── Desktop Sidebar ── */}
-      <aside
-        className="hidden lg:flex flex-col fixed top-0 left-0 h-full z-30"
-        style={{
-          width: desktopW,
-          transition: 'width 220ms cubic-bezier(0.4,0,0.2,1)',
-          background: 'linear-gradient(180deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 100%)',
-          boxShadow: '4px 0 32px rgba(15,23,42,0.35)',
-        }}
-      >
-        <SidebarContent mobile={false} />
+    <div className={`app-shell ${collapsed ? 'sidebar-collapsed' : ''}`}>
+      <a href="#page-content" className="skip-link">Skip to content</a>
+      <aside className="desktop-sidebar"><SidebarContent {...sidebarProps} collapsed={collapsed} /></aside>
+      {mobileOpen && <div className="drawer-backdrop" onClick={() => setMobileOpen(false)} />}
+      <aside ref={drawerRef} id="mobile-navigation" className={`mobile-sidebar ${mobileOpen ? 'is-open' : ''}`}
+        role="dialog" aria-modal={mobileOpen ? true : undefined} aria-label="Navigation" inert={!mobileOpen}>
+        <SidebarContent {...sidebarProps} onNavigate={() => setMobileOpen(false)} onClose={() => setMobileOpen(false)} />
       </aside>
-
-      {/* ── Mobile Drawer Overlay ── */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-
-      {/* ── Mobile Drawer ── */}
-      <aside
-        className="lg:hidden fixed top-0 left-0 h-full z-50 flex flex-col overflow-hidden"
-        style={{
-          width: '280px',
-          transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 250ms cubic-bezier(0.4,0,0.2,1)',
-          background: 'linear-gradient(180deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 100%)',
-          boxShadow: '4px 0 32px rgba(15,23,42,0.35)',
-        }}
-      >
-        <SidebarContent mobile={true} />
-      </aside>
-
-      {/* ── Main ── */}
-      <main
-        className="brecos-main flex-1 min-h-screen flex flex-col"
-        style={{
-          marginLeft: desktopW,
-          transition: 'margin-left 220ms cubic-bezier(0.4,0,0.2,1)',
-        }}
-      >
-        {/* On mobile, override the margin via a style tag */}
-        <style>{`@media (max-width: 1023px) { .brecos-main { margin-left: 0 !important; } }`}</style>
-
-        {/* Top bar */}
-        <header
-          className="sticky top-0 z-20 flex items-center justify-between"
-          style={{
-            height: '60px',
-            padding: '0 16px',
-            background: 'rgba(255,255,255,0.92)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(226,232,240,0.8)',
-            boxShadow: '0 1px 0 rgba(226,232,240,0.8), 0 4px 24px rgba(15,23,42,0.04)',
-          }}
-        >
-          {/* Left */}
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 flex-shrink-0"
-            >
-              <Menu size={20} />
+      <main className="brecos-main" inert={mobileOpen}>
+        <header className="app-header">
+          <div className="flex items-center gap-3 min-w-0">
+            <button ref={menuRef} onClick={() => setMobileOpen(true)} className="icon-control lg:hidden" aria-label="Open navigation" aria-expanded={mobileOpen} aria-controls="mobile-navigation"><Menu size={20} /></button>
+            <button onClick={() => setCollapsed(c => !c)} className="icon-control hidden lg:flex" aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+              {collapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
             </button>
-
-            {/* Desktop collapse toggle */}
-            <button
-              onClick={() => setCollapsed(c => !c)}
-              className="hidden lg:flex w-8 h-8 rounded-lg items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex-shrink-0"
-              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-              {collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
-            </button>
-
-            <div className="w-px h-5 bg-slate-200 hidden sm:block flex-shrink-0" />
-
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-1.5 min-w-0">
-              <span className="text-sm text-slate-400 font-medium hidden sm:inline flex-shrink-0">Brecos</span>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-slate-300 hidden sm:block flex-shrink-0">
-                <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span className="text-sm font-semibold text-slate-700 truncate">{currentPage}</span>
-            </div>
+            <div className="header-breadcrumb"><span className="hidden sm:inline">Workspace</span><ChevronRight size={14} className="hidden sm:block" /><span aria-current="page">{currentPage}</span></div>
           </div>
-
-          {/* Right */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            {/* Date badge - short on mobile, full on sm+ */}
-            <div
-              className="flex items-center px-2 sm:px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0"
-              style={{
-                background: 'linear-gradient(135deg, #eff6ff, #eef2ff)',
-                color: '#3730a3',
-                border: '1px solid rgba(199,210,254,0.6)',
-              }}
-            >
-              <span className="sm:hidden">
-                {new Date().toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })}
-              </span>
-              <span className="hidden sm:inline">
-                {new Date().toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
-              </span>
-            </div>
-
-            <div className="w-px h-5 bg-slate-200 flex-shrink-0" />
-
-            <div className="flex items-center gap-2 cursor-pointer group flex-shrink-0">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)' }}
-              >
-                {user?.name?.[0]?.toUpperCase() ?? 'B'}
-              </div>
-              <div className="hidden md:block">
-                <p className="text-xs font-semibold text-slate-700 leading-none truncate max-w-[100px]">{user?.name ?? 'Admin'}</p>
-                <p className="text-[10px] text-slate-400 mt-0.5">Brecos System</p>
-              </div>
-            </div>
+          <div className="flex items-center gap-4">
+            <div className="header-date"><CalendarDays size={15} /><span>{new Date().toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}</span></div>
+            <div className="header-user"><div className="user-avatar">{user?.name?.[0]?.toUpperCase() ?? 'B'}</div><span className="hidden md:inline text-sm font-semibold text-slate-700 max-w-32 truncate">{user?.name ?? 'Admin'}</span></div>
           </div>
         </header>
-
-        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl mx-auto w-full">
-          <Outlet />
-        </div>
+        <div id="page-content" tabIndex={-1} className="page-content"><Outlet /></div>
       </main>
     </div>
   );

@@ -40,7 +40,7 @@ function StatPill({ label, value, bg, text }) {
 function OverviewCard({ total, paid, partial, unpaid, totalAmount, totalPaid, totalBal }) {
   return (
     <div
-      className="rounded-2xl overflow-hidden flex flex-col"
+      className="summary-card relative rounded-2xl overflow-hidden flex flex-col"
       style={{
         background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #3b82f6 100%)',
         boxShadow: '0 8px 32px rgba(37,99,235,0.25)',
@@ -67,7 +67,7 @@ function OverviewCard({ total, paid, partial, unpaid, totalAmount, totalPaid, to
 
       {/* ── Body: main figures ── */}
       <div className="flex-1 flex items-center px-4 sm:px-6 py-2 relative">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+        <div className="overview-metrics grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
           <div>
             <p className="text-blue-200 text-xs mb-1">Total Bills</p>
             <p className="text-2xl font-extrabold text-white">{total}</p>
@@ -117,7 +117,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
       {/* Cash In */}
-      <div className="rounded-2xl overflow-hidden flex flex-col relative"
+      <div className="summary-card cash-summary rounded-2xl overflow-hidden flex flex-col relative"
         style={{
           background: 'linear-gradient(135deg, #064e3b 0%, #059669 100%)',
           boxShadow: '0 8px 32px rgba(5,150,105,0.2)',
@@ -170,7 +170,7 @@ function CashOverviewCard({ cashIn, cashOut }) {
       </div>
 
       {/* Cash Out */}
-      <div className="rounded-2xl overflow-hidden flex flex-col relative"
+      <div className="summary-card cash-summary rounded-2xl overflow-hidden flex flex-col relative"
         style={{
           background: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)',
           boxShadow: '0 8px 32px rgba(220,38,38,0.2)',
@@ -425,7 +425,7 @@ function TuboHistory({ monthlyData, isLoading }) {
 
   return (
     <div
-      className="bg-white rounded-2xl overflow-hidden"
+      className="surface-card bg-white rounded-2xl overflow-hidden"
       style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}
     >
       <div className="px-6 py-4 flex items-center justify-between"
@@ -697,7 +697,7 @@ export default function DashboardPage() {
 
           {/* ── Row 3: Filtered bills ── */}
           <div
-            className="bg-white rounded-2xl overflow-hidden"
+            className="surface-card bg-white rounded-2xl overflow-hidden"
             style={{ boxShadow: '0 2px 16px rgba(37,99,235,0.07)', border: '1px solid #e0e7ff' }}
           >
             {/* Table header */}
@@ -798,7 +798,7 @@ export default function DashboardPage() {
 
           {/* ── Row 4: Filtered Cash Transactions ── */}
           <div
-            className="bg-white rounded-2xl overflow-hidden mt-6"
+            className="surface-card bg-white rounded-2xl overflow-hidden mt-6"
             style={{ boxShadow: '0 2px 16px rgba(37,99,235,0.07)', border: '1px solid #e0e7ff' }}
           >
             {/* Table header */}

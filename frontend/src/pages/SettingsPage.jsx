@@ -55,7 +55,7 @@ function CategoryList({ items = [], onCreate, onUpdate, onDelete }) {
 
   return (
     <div
-      className="bg-white rounded-2xl overflow-hidden"
+      className="surface-card bg-white rounded-2xl overflow-hidden"
       style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}
     >
       {/* Header */}
@@ -203,7 +203,7 @@ function SimpleList({ title, subtitle, icon: Icon, accentColor, items = [], onCr
   };
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}>
+    <div className="surface-card bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e0e7ff', boxShadow: '0 2px 12px rgba(37,99,235,0.07)' }}>
       <div className="px-6 py-5 flex items-center gap-3" style={{ borderBottom: '1px solid #f1f5ff' }}>
         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: accentColor + '18' }}>
           <Icon size={18} style={{ color: accentColor }} />
